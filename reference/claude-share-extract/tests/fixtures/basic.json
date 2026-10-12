@@ -1,0 +1,66 @@
+{
+  "uuid": "3b8f2c1e-5a6d-4e7f-9a0b-1c2d3e4f5a6b",
+  "conversation_uuid": "aaaa1111-2222-4333-8444-555566667777",
+  "created_at": "2026-09-20T01:10:00.000000Z",
+  "updated_at": "2026-09-20T01:12:30.000000Z",
+  "snapshot_name": "파이썬 리스트 정렬 질문",
+  "created_by": "Example Sharer",
+  "is_public": true,
+  "chat_messages": [
+    {
+      "uuid": "m-0001",
+      "index": 0,
+      "sender": "human",
+      "parent_message_uuid": "00000000-0000-4000-8000-000000000000",
+      "created_at": "2026-09-20T01:10:00.000000Z",
+      "content": [
+        {"type": "text", "text": "파이썬에서 딕셔너리 리스트를 나이순으로 정렬하려면?", "citations": [], "start_timestamp": null}
+      ],
+      "text": "",
+      "attachments": [],
+      "files": [],
+      "files_v2": []
+    },
+    {
+      "uuid": "m-0002",
+      "index": 1,
+      "sender": "assistant",
+      "parent_message_uuid": "m-0001",
+      "created_at": "2026-09-20T01:10:20.000000Z",
+      "stop_reason": "end_turn",
+      "content": [
+        {"type": "text", "text": "`sorted`에 `key`를 넘기면 됩니다.\n\n```python\npeople = [{\"name\": \"민수\", \"age\": 31}, {\"name\": \"지영\", \"age\": 27}]\nprint(sorted(people, key=lambda p: p[\"age\"]))\n```", "citations": []}
+      ],
+      "text": "",
+      "attachments": [],
+      "files": []
+    },
+    {
+      "uuid": "m-0003",
+      "index": 2,
+      "sender": "human",
+      "parent_message_uuid": "m-0002",
+      "created_at": "2026-09-20T01:12:00.000000Z",
+      "content": [
+        {"type": "text", "text": "내림차순은요?"}
+      ],
+      "text": "",
+      "attachments": [],
+      "files": []
+    },
+    {
+      "uuid": "m-0004",
+      "index": 3,
+      "sender": "assistant",
+      "parent_message_uuid": "m-0003",
+      "created_at": "2026-09-20T01:12:30.000000Z",
+      "stop_reason": "end_turn",
+      "content": [
+        {"type": "text", "text": "`reverse=True`를 붙이세요: `sorted(people, key=lambda p: p[\"age\"], reverse=True)`"}
+      ],
+      "text": "",
+      "attachments": [],
+      "files": []
+    }
+  ]
+}

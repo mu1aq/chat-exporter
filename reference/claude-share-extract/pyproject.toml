@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shared-chat-exporter"
+dynamic = ["version"]
+description = "Archive public Claude and ChatGPT shares with branches, tools, artifacts, attachments, raw sources, and hashes."
+readme = "UNIFIED.md"
+requires-python = ">=3.9"
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["claude", "chatgpt", "anthropic", "openai", "share", "archive", "export", "transcript", "cli"]
+classifiers = [
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Natural Language :: Korean",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Text Processing",
+    "Topic :: Utilities",
+]
+dependencies = []
+
+[project.optional-dependencies]
+browser = ["playwright>=1.40"]
+
+[project.scripts]
+claude-share-extract = "claude_share_extract.cli:main"
+cse = "claude_share_extract.cli:main"
+shared-chat-export = "claude_share_extract.cli:main"
+sce = "claude_share_extract.cli:main"
+
+[tool.setuptools]
+packages = ["claude_share_extract", "shared_chat_exporter"]
+
+[tool.setuptools.dynamic]
+version = { attr = "claude_share_extract.__version__" }

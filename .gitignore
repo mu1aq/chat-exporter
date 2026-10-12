@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Export results and raw snapshots (hold conversation content; never commit by accident).
+# Non-anchored so nested copies (e.g. reference/*/out/) are also ignored.
+out/
+output/
+snapshots/
+artifacts/
+*.snapshot.json
+
+# OS / 에디터
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

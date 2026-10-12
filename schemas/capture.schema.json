@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shared-chat-exporter:schema:chatgpt-capture:1",
+  "title": "Shared Chat Exporter ChatGPT browser capture",
+  "type": "object",
+  "required": [
+    "provider",
+    "source_url",
+    "final_url",
+    "http_status",
+    "title",
+    "records",
+    "scripts",
+    "responses",
+    "assets",
+    "observations",
+    "traversal"
+  ],
+  "properties": {
+    "provider": {
+      "const": "chatgpt"
+    },
+    "source_url": {
+      "type": "string"
+    },
+    "final_url": {
+      "type": "string"
+    },
+    "http_status": {
+      "type": "integer"
+    },
+    "title": {
+      "type": "string"
+    },
+    "document_language": {
+      "type": ["string", "null"]
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/record"
+      }
+    },
+    "scripts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "body_text": {
+      "type": "string"
+    },
+    "page_html": {
+      "type": "string"
+    },
+    "responses": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/response"
+      }
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "screenshot": {
+      "type": ["object", "null"],
+      "additionalProperties": true
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "traversal": {
+      "$ref": "#/$defs/traversal"
+    }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "record": {
+      "type": "object",
+      "required": [
+        "role",
+        "html",
+        "outer_html",
+        "plain_text",
+        "text_content",
+        "source",
+        "resources"
+      ],
+      "properties": {
+        "role": {
+          "enum": ["user", "assistant"]
+        },
+        "source_id": {
+          "type": ["string", "null"]
+        },
+        "turn_index": {
+          "type": ["integer", "null"]
+        },
+        "turn_test_id": {
+          "type": "string"
+        },
+        "html": {
+          "type": "string"
+        },
+        "outer_html": {
+          "type": "string"
+        },
+        "plain_text": {
+          "type": "string"
+        },
+        "text_content": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "collection_order": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    },
+    "response": {
+      "type": "object",
+      "required": ["url"],
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer"
+        },
+        "mime": {
+          "type": "string"
+        },
+        "resource_type": {
+          "type": "string"
+        },
+        "headers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "captured": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "body_base64": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "json": {}
+      },
+      "additionalProperties": true
+    },
+    "traversal": {
+      "type": "object",
+      "required": [
+        "toc_prompt_count",
+        "toc_prompts_visited",
+        "unique_message_counts",
+        "deadline_reached"
+      ],
+      "properties": {
+        "toc_prompt_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "toc_prompts_visited": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unique_message_counts": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "deadline_reached": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

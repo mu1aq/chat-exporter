@@ -1,0 +1,548 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shared-chat-exporter:schema:conversation:1",
+  "title": "Shared Chat Exporter normalized conversation",
+  "type": "object",
+  "required": [
+    "provider",
+    "source",
+    "options",
+    "turns",
+    "messages",
+    "all_messages",
+    "branches",
+    "artifacts",
+    "stats",
+    "warnings",
+    "preservation"
+  ],
+  "properties": {
+    "provider": {
+      "enum": ["chatgpt", "claude"]
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "options": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "turns": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/turn"
+      }
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/message"
+      }
+    },
+    "all_messages": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/message"
+      }
+    },
+    "branches": {
+      "$ref": "#/$defs/branches"
+    },
+    "active_branch_id": {
+      "type": ["string", "null"]
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/artifact"
+      }
+    },
+    "artifact_events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/asset"
+      }
+    },
+    "stats": {
+      "$ref": "#/$defs/stats"
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "preservation": {
+      "$ref": "#/$defs/preservation"
+    },
+    "capture": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "nullableString": {
+      "type": ["string", "null"]
+    },
+    "source": {
+      "type": "object",
+      "required": ["provider", "share_id", "share_url", "title"],
+      "properties": {
+        "provider": {
+          "enum": ["chatgpt", "claude"]
+        },
+        "share_id": {
+          "type": ["string", "null"]
+        },
+        "share_url": {
+          "type": ["string", "null"]
+        },
+        "final_url": {
+          "type": ["string", "null"]
+        },
+        "title": {
+          "type": "string"
+        },
+        "created_at": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "updated_at": {
+          "$ref": "#/$defs/nullableString"
+        }
+      },
+      "additionalProperties": true
+    },
+    "turn": {
+      "type": "object",
+      "required": [
+        "turn",
+        "user_input",
+        "agent_output",
+        "attachments",
+        "tool_call_count"
+      ],
+      "properties": {
+        "turn": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "user_input": {
+          "type": "string"
+        },
+        "agent_output": {
+          "type": "string"
+        },
+        "user_at": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "agent_at": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "attachments": {
+          "type": "array"
+        },
+        "tool_call_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "message_ids": {
+          "type": "array",
+          "items": {
+            "type": ["string", "null"]
+          }
+        },
+        "thinking": {
+          "type": "string"
+        },
+        "tool_calls": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "block": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "subtype": {
+          "type": ["string", "null"]
+        },
+        "text": {
+          "type": "string"
+        },
+        "id": {
+          "type": ["string", "null"]
+        },
+        "name": {
+          "type": "string"
+        },
+        "input": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "tool_use_id": {
+          "type": ["string", "null"]
+        },
+        "is_error": {
+          "type": "boolean"
+        },
+        "citations": {
+          "type": "array"
+        },
+        "meta": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "raw": {}
+      },
+      "additionalProperties": true
+    },
+    "message": {
+      "type": "object",
+      "required": ["role"],
+      "properties": {
+        "uuid": {
+          "type": ["string", "null"]
+        },
+        "node_id": {
+          "type": ["string", "null"]
+        },
+        "parent": {
+          "type": ["string", "null"]
+        },
+        "parent_uuid": {
+          "type": ["string", "null"]
+        },
+        "index": {
+          "type": ["integer", "null"]
+        },
+        "role": {
+          "type": "string"
+        },
+        "sender": {
+          "type": "string"
+        },
+        "created_at": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "updated_at": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "text": {
+          "type": "string"
+        },
+        "blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/block"
+          }
+        },
+        "attachments": {
+          "type": "array"
+        },
+        "files": {
+          "type": "array"
+        },
+        "files_meta": {
+          "type": "array"
+        },
+        "resources": {
+          "type": "array"
+        },
+        "raw": {},
+        "raw_html": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "branchNode": {
+      "type": "object",
+      "required": ["uuid", "role", "is_active", "message"],
+      "properties": {
+        "uuid": {
+          "type": ["string", "null"]
+        },
+        "parent_uuid": {
+          "type": ["string", "null"]
+        },
+        "index": {
+          "type": ["integer", "null"]
+        },
+        "role": {
+          "type": "string"
+        },
+        "created_at": {
+          "$ref": "#/$defs/nullableString"
+        },
+        "is_active": {
+          "type": "boolean"
+        },
+        "message": {
+          "$ref": "#/$defs/message"
+        }
+      },
+      "additionalProperties": true
+    },
+    "branchPath": {
+      "type": "object",
+      "required": ["leaf_uuid", "is_active", "length", "message_uuids"],
+      "properties": {
+        "leaf_uuid": {
+          "type": ["string", "null"]
+        },
+        "is_active": {
+          "type": "boolean"
+        },
+        "length": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "message_uuids": {
+          "type": "array",
+          "items": {
+            "type": ["string", "null"]
+          }
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/message"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "branches": {
+      "type": "object",
+      "required": ["active_leaf_uuid", "linked", "nodes", "paths"],
+      "properties": {
+        "active_leaf_uuid": {
+          "type": ["string", "null"]
+        },
+        "linked": {
+          "type": "boolean"
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/branchNode"
+          }
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/branchPath"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "artifactVersion": {
+      "type": "object",
+      "required": ["content"],
+      "properties": {
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "action": {
+          "type": ["string", "null"]
+        },
+        "content": {
+          "type": "string"
+        },
+        "ext": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "artifact": {
+      "type": "object",
+      "required": ["key", "title", "content"],
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        },
+        "ext": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "versions": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/artifactVersion"
+              }
+            }
+          ]
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifactVersion"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "asset": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": ["string", "null"]
+        },
+        "name": {
+          "type": ["string", "null"]
+        },
+        "mime": {
+          "type": ["string", "null"]
+        },
+        "url": {
+          "type": ["string", "null"]
+        },
+        "source": {
+          "type": ["string", "null"]
+        },
+        "fetched": {
+          "type": "boolean"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sha256": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "content_base64": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "stats": {
+      "type": "object",
+      "required": ["turns", "messages"],
+      "properties": {
+        "turns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "messages": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "messages_in_source": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "messages_in_snapshot": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "user_chars": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "assistant_chars": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tool_calls": {
+          "type": "object"
+        },
+        "attachments": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "artifacts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "thinking_blocks": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    },
+    "issue": {
+      "type": "object",
+      "required": ["item", "reason"],
+      "properties": {
+        "item": {},
+        "reason": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "preservation": {
+      "type": "object",
+      "required": ["captured", "dropped", "uncertain"],
+      "properties": {
+        "captured": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dropped": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/issue"
+          }
+        },
+        "uncertain": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/issue"
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

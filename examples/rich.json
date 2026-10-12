@@ -1,0 +1,763 @@
+{
+  "source": {
+    "share_id": "5f2c1a9e-1111-4c2d-9e8f-abcdefabcdef",
+    "share_url": "https://claude.ai/share/5f2c1a9e-1111-4c2d-9e8f-abcdefabcdef",
+    "title": "주간 보고서 초안 만들기",
+    "created_at": "2026-10-01T09:00:00Z",
+    "updated_at": "2026-10-01T09:10:00Z",
+    "provider": "claude"
+  },
+  "options": {
+    "attachments": true,
+    "artifacts": true,
+    "tools": false,
+    "thinking": false
+  },
+  "stats": {
+    "turns": 2,
+    "messages": 4,
+    "messages_in_snapshot": 5,
+    "user_chars": 129,
+    "assistant_chars": 218,
+    "tool_calls": {
+      "artifacts": 2,
+      "web_search": 1
+    },
+    "attachments": 2,
+    "artifacts": 1,
+    "thinking_blocks": 1,
+    "branches": 2,
+    "alternate_branches": 1
+  },
+  "warnings": [
+    "The conversation has branches (regenerations/edits). The transcript shows the active branch of 4 messages; all 5 messages are preserved in branches."
+  ],
+  "preservation": {
+    "captured": [
+      "raw snapshot",
+      "all exposed message branches",
+      "raw/unknown blocks",
+      "citations",
+      "tool calls/results",
+      "artifact version history",
+      "attachment metadata"
+    ],
+    "dropped": [],
+    "uncertain": [
+      {
+        "item": "hidden-or-server-only-data",
+        "reason": "private data and hidden reasoning the server did not include in the share snapshot cannot be recovered"
+      },
+      {
+        "item": "file:chart.png",
+        "reason": "the share snapshot has only file metadata, not the binary original"
+      }
+    ],
+    "limitations": [
+      "Hidden reasoning or private data the server did not send to the share snapshot cannot be retrieved.",
+      "When a binary attachment's original is absent from the snapshot, only its metadata and the failure reason are preserved."
+    ]
+  },
+  "branches": {
+    "active_leaf_uuid": "a2",
+    "linked": true,
+    "nodes": [
+      {
+        "uuid": "u1",
+        "parent_uuid": "00000000-0000-4000-8000-000000000000",
+        "index": 0,
+        "role": "user",
+        "created_at": "2026-10-01T09:00:00Z",
+        "is_active": true,
+        "message": {
+          "index": 0,
+          "uuid": "u1",
+          "parent_uuid": "00000000-0000-4000-8000-000000000000",
+          "sender": "human",
+          "role": "user",
+          "created_at": "2026-10-01T09:00:00Z",
+          "stop_reason": null,
+          "text": "아래 메모로 주간 보고서 써줘, \"따옴표\", 쉼표 포함",
+          "blocks": [
+            {
+              "type": "text",
+              "text": "아래 메모로 주간 보고서 써줘, \"따옴표\", 쉼표 포함"
+            }
+          ],
+          "attachments": [
+            {
+              "name": "Pasted text",
+              "content": "- 매출 12% 증가\n- 신규 고객 3곳",
+              "meta": {
+                "file_type": "txt"
+              }
+            }
+          ],
+          "files": [
+            "chart.png"
+          ],
+          "files_meta": [
+            {
+              "name": "chart.png",
+              "meta": {
+                "file_kind": "image"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "uuid": "a1-old",
+        "parent_uuid": "u1",
+        "index": 1,
+        "role": "assistant",
+        "created_at": "2026-10-01T09:01:00Z",
+        "is_active": false,
+        "message": {
+          "index": 1,
+          "uuid": "a1-old",
+          "parent_uuid": "u1",
+          "sender": "assistant",
+          "role": "assistant",
+          "created_at": "2026-10-01T09:01:00Z",
+          "stop_reason": null,
+          "text": "(다시 생성하기 전 답변)",
+          "blocks": [
+            {
+              "type": "text",
+              "text": "(다시 생성하기 전 답변)"
+            }
+          ],
+          "attachments": [],
+          "files": [],
+          "files_meta": []
+        }
+      },
+      {
+        "uuid": "a1",
+        "parent_uuid": "u1",
+        "index": 2,
+        "role": "assistant",
+        "created_at": "2026-10-01T09:02:00Z",
+        "is_active": true,
+        "message": {
+          "index": 2,
+          "uuid": "a1",
+          "parent_uuid": "u1",
+          "sender": "assistant",
+          "role": "assistant",
+          "created_at": "2026-10-01T09:02:00Z",
+          "stop_reason": null,
+          "text": "보고서를 작성했습니다.\n\n필요하면 수정할게요.",
+          "blocks": [
+            {
+              "type": "thinking",
+              "text": "메모를 정리해서 보고서 형태로 만든다.",
+              "subtype": "thinking"
+            },
+            {
+              "type": "tool_use",
+              "id": "t1",
+              "name": "web_search",
+              "input": {
+                "query": "주간 보고서 양식"
+              },
+              "subtype": "tool_use"
+            },
+            {
+              "type": "tool_result",
+              "tool_use_id": "t1",
+              "name": "web_search",
+              "is_error": false,
+              "text": "보고서 양식 예시\n요약-성과-계획 순서",
+              "subtype": "tool_result",
+              "content_raw": [
+                {
+                  "type": "knowledge",
+                  "title": "보고서 양식 예시",
+                  "url": "https://example.com",
+                  "text": "요약-성과-계획 순서"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": "보고서를 작성했습니다."
+            },
+            {
+              "type": "tool_use",
+              "id": "t2",
+              "name": "artifacts",
+              "input": {
+                "command": "create",
+                "id": "report",
+                "title": "주간 보고서",
+                "type": "text/markdown",
+                "content": "# 주간 보고서\n```\ncode inside\n```\n- 매출 12% 증가"
+              },
+              "subtype": "tool_use"
+            },
+            {
+              "type": "tool_result",
+              "tool_use_id": "t2",
+              "name": "artifacts",
+              "is_error": false,
+              "text": "OK",
+              "subtype": "tool_result",
+              "content_raw": [
+                {
+                  "type": "text",
+                  "text": "OK"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": "필요하면 수정할게요."
+            }
+          ],
+          "attachments": [],
+          "files": [],
+          "files_meta": []
+        }
+      },
+      {
+        "uuid": "u2",
+        "parent_uuid": "a1",
+        "index": 3,
+        "role": "user",
+        "created_at": "2026-10-01T09:05:00Z",
+        "is_active": true,
+        "message": {
+          "index": 3,
+          "uuid": "u2",
+          "parent_uuid": "a1",
+          "sender": "human",
+          "role": "user",
+          "created_at": "2026-10-01T09:05:00Z",
+          "stop_reason": null,
+          "text": "좋아, 한 줄 요약도 넣고 매출 숫자는 15%로 고쳐줘",
+          "blocks": [
+            {
+              "type": "text",
+              "text": "좋아, 한 줄 요약도 넣고 매출 숫자는 15%로 고쳐줘"
+            }
+          ],
+          "attachments": [],
+          "files": [],
+          "files_meta": []
+        }
+      },
+      {
+        "uuid": "a2",
+        "parent_uuid": "u2",
+        "index": 4,
+        "role": "assistant",
+        "created_at": "2026-10-01T09:06:00Z",
+        "is_active": true,
+        "message": {
+          "index": 4,
+          "uuid": "a2",
+          "parent_uuid": "u2",
+          "sender": "assistant",
+          "role": "assistant",
+          "created_at": "2026-10-01T09:06:00Z",
+          "stop_reason": null,
+          "text": "매출이 15% 늘고 신규 고객 3곳을 확보했습니다.",
+          "blocks": [
+            {
+              "type": "tool_use",
+              "id": "t3",
+              "name": "artifacts",
+              "input": {
+                "command": "update",
+                "id": "report",
+                "old_str": "매출 12% 증가",
+                "new_str": "매출 15% 증가"
+              },
+              "subtype": "tool_use"
+            },
+            {
+              "type": "tool_result",
+              "tool_use_id": "t3",
+              "name": "artifacts",
+              "is_error": false,
+              "text": "OK",
+              "subtype": "tool_result",
+              "content_raw": [
+                {
+                  "type": "text",
+                  "text": "OK"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": "매출이 15% 늘고 신규 고객 3곳을 확보했습니다."
+            }
+          ],
+          "attachments": [],
+          "files": [],
+          "files_meta": []
+        }
+      }
+    ],
+    "paths": [
+      {
+        "leaf_uuid": "a1-old",
+        "is_active": false,
+        "length": 2,
+        "message_uuids": [
+          "u1",
+          "a1-old"
+        ]
+      },
+      {
+        "leaf_uuid": "a2",
+        "is_active": true,
+        "length": 4,
+        "message_uuids": [
+          "u1",
+          "a1",
+          "u2",
+          "a2"
+        ]
+      }
+    ]
+  },
+  "turns": [
+    {
+      "turn": 1,
+      "user_input": "아래 메모로 주간 보고서 써줘, \"따옴표\", 쉼표 포함\n\n[attachment: Pasted text]\n- 매출 12% 증가\n- 신규 고객 3곳\n\n[file: chart.png]",
+      "agent_output": "보고서를 작성했습니다.\n\n[Artifact: 주간 보고서]\n````markdown\n# 주간 보고서\n```\ncode inside\n```\n- 매출 12% 증가\n````\n\n필요하면 수정할게요.",
+      "user_at": "2026-10-01T09:00:00Z",
+      "agent_at": "2026-10-01T09:02:00Z",
+      "attachments": [
+        "Pasted text",
+        "chart.png"
+      ],
+      "tool_call_count": 2
+    },
+    {
+      "turn": 2,
+      "user_input": "좋아, 한 줄 요약도 넣고 매출 숫자는 15%로 고쳐줘",
+      "agent_output": "[Artifact update: 주간 보고서]\n````markdown\n# 주간 보고서\n```\ncode inside\n```\n- 매출 15% 증가\n````\n\n매출이 15% 늘고 신규 고객 3곳을 확보했습니다.",
+      "user_at": "2026-10-01T09:05:00Z",
+      "agent_at": "2026-10-01T09:06:00Z",
+      "attachments": [],
+      "tool_call_count": 1
+    }
+  ],
+  "artifacts": [
+    {
+      "key": "report",
+      "title": "주간 보고서",
+      "type": "text/markdown",
+      "language": "markdown",
+      "ext": "md",
+      "content": "# 주간 보고서\n```\ncode inside\n```\n- 매출 15% 증가",
+      "versions": 2,
+      "history": [
+        {
+          "version": 1,
+          "action": "create",
+          "content": "# 주간 보고서\n```\ncode inside\n```\n- 매출 12% 증가",
+          "title": "주간 보고서",
+          "ext": "md",
+          "language": "markdown"
+        },
+        {
+          "version": 2,
+          "action": "update",
+          "content": "# 주간 보고서\n```\ncode inside\n```\n- 매출 15% 증가",
+          "title": "주간 보고서",
+          "ext": "md",
+          "language": "markdown"
+        }
+      ]
+    }
+  ],
+  "messages": [
+    {
+      "index": 0,
+      "uuid": "u1",
+      "parent_uuid": "00000000-0000-4000-8000-000000000000",
+      "sender": "human",
+      "role": "user",
+      "created_at": "2026-10-01T09:00:00Z",
+      "stop_reason": null,
+      "text": "아래 메모로 주간 보고서 써줘, \"따옴표\", 쉼표 포함",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "아래 메모로 주간 보고서 써줘, \"따옴표\", 쉼표 포함"
+        }
+      ],
+      "attachments": [
+        {
+          "name": "Pasted text",
+          "content": "- 매출 12% 증가\n- 신규 고객 3곳",
+          "meta": {
+            "file_type": "txt"
+          }
+        }
+      ],
+      "files": [
+        "chart.png"
+      ],
+      "files_meta": [
+        {
+          "name": "chart.png",
+          "meta": {
+            "file_kind": "image"
+          }
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "uuid": "a1",
+      "parent_uuid": "u1",
+      "sender": "assistant",
+      "role": "assistant",
+      "created_at": "2026-10-01T09:02:00Z",
+      "stop_reason": null,
+      "text": "보고서를 작성했습니다.\n\n필요하면 수정할게요.",
+      "blocks": [
+        {
+          "type": "thinking",
+          "text": "메모를 정리해서 보고서 형태로 만든다.",
+          "subtype": "thinking"
+        },
+        {
+          "type": "tool_use",
+          "id": "t1",
+          "name": "web_search",
+          "input": {
+            "query": "주간 보고서 양식"
+          },
+          "subtype": "tool_use"
+        },
+        {
+          "type": "tool_result",
+          "tool_use_id": "t1",
+          "name": "web_search",
+          "is_error": false,
+          "text": "보고서 양식 예시\n요약-성과-계획 순서",
+          "subtype": "tool_result",
+          "content_raw": [
+            {
+              "type": "knowledge",
+              "title": "보고서 양식 예시",
+              "url": "https://example.com",
+              "text": "요약-성과-계획 순서"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "보고서를 작성했습니다."
+        },
+        {
+          "type": "tool_use",
+          "id": "t2",
+          "name": "artifacts",
+          "input": {
+            "command": "create",
+            "id": "report",
+            "title": "주간 보고서",
+            "type": "text/markdown",
+            "content": "# 주간 보고서\n```\ncode inside\n```\n- 매출 12% 증가"
+          },
+          "subtype": "tool_use"
+        },
+        {
+          "type": "tool_result",
+          "tool_use_id": "t2",
+          "name": "artifacts",
+          "is_error": false,
+          "text": "OK",
+          "subtype": "tool_result",
+          "content_raw": [
+            {
+              "type": "text",
+              "text": "OK"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "필요하면 수정할게요."
+        }
+      ],
+      "attachments": [],
+      "files": [],
+      "files_meta": []
+    },
+    {
+      "index": 3,
+      "uuid": "u2",
+      "parent_uuid": "a1",
+      "sender": "human",
+      "role": "user",
+      "created_at": "2026-10-01T09:05:00Z",
+      "stop_reason": null,
+      "text": "좋아, 한 줄 요약도 넣고 매출 숫자는 15%로 고쳐줘",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "좋아, 한 줄 요약도 넣고 매출 숫자는 15%로 고쳐줘"
+        }
+      ],
+      "attachments": [],
+      "files": [],
+      "files_meta": []
+    },
+    {
+      "index": 4,
+      "uuid": "a2",
+      "parent_uuid": "u2",
+      "sender": "assistant",
+      "role": "assistant",
+      "created_at": "2026-10-01T09:06:00Z",
+      "stop_reason": null,
+      "text": "매출이 15% 늘고 신규 고객 3곳을 확보했습니다.",
+      "blocks": [
+        {
+          "type": "tool_use",
+          "id": "t3",
+          "name": "artifacts",
+          "input": {
+            "command": "update",
+            "id": "report",
+            "old_str": "매출 12% 증가",
+            "new_str": "매출 15% 증가"
+          },
+          "subtype": "tool_use"
+        },
+        {
+          "type": "tool_result",
+          "tool_use_id": "t3",
+          "name": "artifacts",
+          "is_error": false,
+          "text": "OK",
+          "subtype": "tool_result",
+          "content_raw": [
+            {
+              "type": "text",
+              "text": "OK"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "매출이 15% 늘고 신규 고객 3곳을 확보했습니다."
+        }
+      ],
+      "attachments": [],
+      "files": [],
+      "files_meta": []
+    }
+  ],
+  "all_messages": [
+    {
+      "index": 0,
+      "uuid": "u1",
+      "parent_uuid": "00000000-0000-4000-8000-000000000000",
+      "sender": "human",
+      "role": "user",
+      "created_at": "2026-10-01T09:00:00Z",
+      "stop_reason": null,
+      "text": "아래 메모로 주간 보고서 써줘, \"따옴표\", 쉼표 포함",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "아래 메모로 주간 보고서 써줘, \"따옴표\", 쉼표 포함"
+        }
+      ],
+      "attachments": [
+        {
+          "name": "Pasted text",
+          "content": "- 매출 12% 증가\n- 신규 고객 3곳",
+          "meta": {
+            "file_type": "txt"
+          }
+        }
+      ],
+      "files": [
+        "chart.png"
+      ],
+      "files_meta": [
+        {
+          "name": "chart.png",
+          "meta": {
+            "file_kind": "image"
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "uuid": "a1-old",
+      "parent_uuid": "u1",
+      "sender": "assistant",
+      "role": "assistant",
+      "created_at": "2026-10-01T09:01:00Z",
+      "stop_reason": null,
+      "text": "(다시 생성하기 전 답변)",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "(다시 생성하기 전 답변)"
+        }
+      ],
+      "attachments": [],
+      "files": [],
+      "files_meta": []
+    },
+    {
+      "index": 2,
+      "uuid": "a1",
+      "parent_uuid": "u1",
+      "sender": "assistant",
+      "role": "assistant",
+      "created_at": "2026-10-01T09:02:00Z",
+      "stop_reason": null,
+      "text": "보고서를 작성했습니다.\n\n필요하면 수정할게요.",
+      "blocks": [
+        {
+          "type": "thinking",
+          "text": "메모를 정리해서 보고서 형태로 만든다.",
+          "subtype": "thinking"
+        },
+        {
+          "type": "tool_use",
+          "id": "t1",
+          "name": "web_search",
+          "input": {
+            "query": "주간 보고서 양식"
+          },
+          "subtype": "tool_use"
+        },
+        {
+          "type": "tool_result",
+          "tool_use_id": "t1",
+          "name": "web_search",
+          "is_error": false,
+          "text": "보고서 양식 예시\n요약-성과-계획 순서",
+          "subtype": "tool_result",
+          "content_raw": [
+            {
+              "type": "knowledge",
+              "title": "보고서 양식 예시",
+              "url": "https://example.com",
+              "text": "요약-성과-계획 순서"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "보고서를 작성했습니다."
+        },
+        {
+          "type": "tool_use",
+          "id": "t2",
+          "name": "artifacts",
+          "input": {
+            "command": "create",
+            "id": "report",
+            "title": "주간 보고서",
+            "type": "text/markdown",
+            "content": "# 주간 보고서\n```\ncode inside\n```\n- 매출 12% 증가"
+          },
+          "subtype": "tool_use"
+        },
+        {
+          "type": "tool_result",
+          "tool_use_id": "t2",
+          "name": "artifacts",
+          "is_error": false,
+          "text": "OK",
+          "subtype": "tool_result",
+          "content_raw": [
+            {
+              "type": "text",
+              "text": "OK"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "필요하면 수정할게요."
+        }
+      ],
+      "attachments": [],
+      "files": [],
+      "files_meta": []
+    },
+    {
+      "index": 3,
+      "uuid": "u2",
+      "parent_uuid": "a1",
+      "sender": "human",
+      "role": "user",
+      "created_at": "2026-10-01T09:05:00Z",
+      "stop_reason": null,
+      "text": "좋아, 한 줄 요약도 넣고 매출 숫자는 15%로 고쳐줘",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "좋아, 한 줄 요약도 넣고 매출 숫자는 15%로 고쳐줘"
+        }
+      ],
+      "attachments": [],
+      "files": [],
+      "files_meta": []
+    },
+    {
+      "index": 4,
+      "uuid": "a2",
+      "parent_uuid": "u2",
+      "sender": "assistant",
+      "role": "assistant",
+      "created_at": "2026-10-01T09:06:00Z",
+      "stop_reason": null,
+      "text": "매출이 15% 늘고 신규 고객 3곳을 확보했습니다.",
+      "blocks": [
+        {
+          "type": "tool_use",
+          "id": "t3",
+          "name": "artifacts",
+          "input": {
+            "command": "update",
+            "id": "report",
+            "old_str": "매출 12% 증가",
+            "new_str": "매출 15% 증가"
+          },
+          "subtype": "tool_use"
+        },
+        {
+          "type": "tool_result",
+          "tool_use_id": "t3",
+          "name": "artifacts",
+          "is_error": false,
+          "text": "OK",
+          "subtype": "tool_result",
+          "content_raw": [
+            {
+              "type": "text",
+              "text": "OK"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "매출이 15% 늘고 신규 고객 3곳을 확보했습니다."
+        }
+      ],
+      "attachments": [],
+      "files": [],
+      "files_meta": []
+    }
+  ]
+}

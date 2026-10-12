@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 추출 결과·원본 스냅샷 (대화 내용이 들어 있으니 실수로 올리지 않도록)
+/out/
+/output/
+/snapshots/
+/artifacts/
+*.snapshot.json
+
+# OS / 에디터
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

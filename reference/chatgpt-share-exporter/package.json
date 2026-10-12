@@ -1,0 +1,30 @@
+{
+  "name": "chatgpt-share-exporter",
+  "version": "1.0.0",
+  "description": "Export public ChatGPT shared conversations to auditable Markdown or text files.",
+  "type": "module",
+  "bin": {
+    "chatgpt-share-export": "./src/cli.js"
+  },
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check src/cli.js && node --test",
+    "example": "node src/cli.js extract https://chatgpt.com/share/REPLACE_ME --output example.md --save-html"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "playwright": "^1.55.0",
+    "turndown": "^7.2.0",
+    "turndown-plugin-gfm": "^1.0.2"
+  },
+  "license": "MIT",
+  "keywords": [
+    "chatgpt",
+    "shared-link",
+    "export",
+    "playwright",
+    "markdown"
+  ]
+}

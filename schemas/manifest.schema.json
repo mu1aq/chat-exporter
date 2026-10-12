@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:shared-chat-exporter:schema:manifest:1",
+  "title": "Shared Chat Exporter archive manifest",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "tool",
+    "provider",
+    "generatedAt",
+    "source",
+    "branches",
+    "artifacts",
+    "assets",
+    "warnings",
+    "contents",
+    "dropped",
+    "uncertain",
+    "limitations"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "tool": {
+      "$ref": "#/$defs/tool"
+    },
+    "provider": {
+      "enum": ["chatgpt", "claude"]
+    },
+    "generatedAt": {
+      "type": "string"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "stats": {
+      "type": ["object", "null"],
+      "additionalProperties": true
+    },
+    "branches": {
+      "type": "object",
+      "required": ["active_leaf_uuid", "linked", "pathCount", "alternateCount"],
+      "properties": {
+        "active_leaf_uuid": {
+          "type": ["string", "null"]
+        },
+        "linked": {
+          "type": ["boolean", "null"]
+        },
+        "pathCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "alternateCount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["dir", "versionCount"],
+        "properties": {
+          "key": {
+            "type": ["string", "null"]
+          },
+          "title": {
+            "type": ["string", "null"]
+          },
+          "dir": {
+            "type": "string"
+          },
+          "versions": {},
+          "versionCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "artifactEvents": {
+      "type": "array"
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/assetSummary"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "contents": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "dropped": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/issue"
+      }
+    },
+    "uncertain": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/issue"
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "tool": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": {
+          "const": "shared-chat-exporter"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "issue": {
+      "type": "object",
+      "required": ["item", "reason"],
+      "properties": {
+        "item": {},
+        "reason": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "assetSummary": {
+      "type": "object",
+      "required": ["fetched", "saved_path"],
+      "properties": {
+        "id": {
+          "type": ["string", "null"]
+        },
+        "name": {
+          "type": ["string", "null"]
+        },
+        "mime": {
+          "type": ["string", "null"]
+        },
+        "url": {
+          "type": ["string", "null"]
+        },
+        "source": {
+          "type": ["string", "null"]
+        },
+        "fetched": {
+          "type": "boolean"
+        },
+        "saved_path": {
+          "type": ["string", "null"]
+        },
+        "sha256": {
+          "type": ["string", "null"]
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}
