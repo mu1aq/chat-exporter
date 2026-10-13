@@ -25,6 +25,14 @@ DESCRIPTIONS = {
 }
 
 
+_ASSISTANT_LABEL = {"chatgpt": "ChatGPT", "codex": "Codex"}
+
+
+def assistant_label(provider: Optional[str]) -> str:
+    """Display name for the assistant side (Claude, ChatGPT, Codex, ...)."""
+    return _ASSISTANT_LABEL.get(provider or "", "Claude")
+
+
 def _dump(obj: Any) -> str:
     return json.dumps(obj, ensure_ascii=False, separators=(",", ":"))
 
@@ -85,7 +93,7 @@ def to_markdown(convs: List[Conv], only: Optional[str] = None, **_: Any) -> str:
     md: List[str] = []
     for c in convs:
         src = c["source"]
-        assistant = "ChatGPT" if src.get("provider") == "chatgpt" else "Claude"
+        assistant = assistant_label(src.get("provider"))
         md.append("# " + (src["title"] or assistant + " conversation"))
         meta = [f"<{src['share_url']}>" if src.get("share_url") else "", _when(src.get("created_at")),
                 f"{len(c['turns'])} turns"]
@@ -109,7 +117,7 @@ def to_text(convs: List[Conv], only: Optional[str] = None, **_: Any) -> str:
     out: List[str] = []
     for c in convs:
         src = c["source"]
-        assistant = "ChatGPT" if src.get("provider") == "chatgpt" else "Claude"
+        assistant = assistant_label(src.get("provider"))
         out.append(f"==== {src['title'] or assistant + ' conversation'} ====" + (f"\n{src['share_url']}" if src.get("share_url") else ""))
         for t in c["turns"]:
             if only != "assistant":

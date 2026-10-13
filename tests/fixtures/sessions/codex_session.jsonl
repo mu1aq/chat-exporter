@@ -1,0 +1,14 @@
+{"type":"session_meta","timestamp":"2026-10-12T00:00:00Z","payload":{"session_id":"cx-1","id":"cx-1","timestamp":"2026-10-12T00:00:00Z","cli_version":"0.162.1","cwd":"/x"}}
+{"type":"turn_context","payload":{"turn_id":"t1","model":"gpt-daybreak-blue","effort":"high"}}
+{"type":"response_item","timestamp":"2026-10-12T00:00:00Z","payload":{"type":"message","role":"developer","content":[{"type":"input_text","text":"<skills_instructions>harness</skills_instructions>"}]}}
+{"type":"response_item","timestamp":"2026-10-12T00:00:01Z","payload":{"type":"message","role":"user","content":[{"type":"input_text","text":"<environment_context>\n<cwd>/x</cwd>\n</environment_context>"}]}}
+{"type":"response_item","timestamp":"2026-10-12T00:00:02Z","payload":{"type":"message","role":"user","content":[{"type":"input_text","text":"List files then sort."}]}}
+{"type":"response_item","timestamp":"2026-10-12T00:00:03Z","payload":{"type":"reasoning","summary":[{"type":"summary_text","text":"Plan: run ls."}],"encrypted_content":"gAAAAABsecret"}}
+{"type":"response_item","timestamp":"2026-10-12T00:00:03Z","payload":{"type":"custom_tool_call","call_id":"c1","name":"exec","input":"ls -la","status":"completed"}}
+{"type":"response_item","timestamp":"2026-10-12T00:00:04Z","payload":{"type":"custom_tool_call_output","call_id":"c1","output":[{"type":"input_text","text":"file1\nfile2"}]}}
+{"type":"response_item","timestamp":"2026-10-12T00:00:05Z","payload":{"type":"message","role":"assistant","content":[{"type":"output_text","text":"Found two files."}]}}
+{"type":"token_usage_record","payload":{"total":10}}
+{"type":"response_item","timestamp":"2026-10-12T00:00:06Z","payload":{"type":"message","role":"user","content":[{"type":"input_text","text":"Sort descending."}]}}
+{"type":"response_item","timestamp":"2026-10-12T00:00:07Z","payload":{"type":"function_call","call_id":"f1","name":"wait","arguments":"{\"ms\":10}"}}
+{"type":"response_item","timestamp":"2026-10-12T00:00:08Z","payload":{"type":"function_call_output","call_id":"f1","output":"done"}}
+{"type":"response_item","timestamp":"2026-10-12T00:00:09Z","payload":{"type":"message","role":"assistant","content":[{"type":"output_text","text":"Use reverse=True."}]}}

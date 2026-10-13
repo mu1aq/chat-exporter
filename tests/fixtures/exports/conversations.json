@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Py sort",
+    "conversation_id": "c-aaa",
+    "create_time": 1760000000,
+    "update_time": 1760000100,
+    "current_node": "n4",
+    "mapping": {
+      "root": {"id": "root", "message": null, "parent": null, "children": ["n1"]},
+      "n1": {"id": "n1", "parent": "root", "children": ["n2"], "message": {"id": "m1", "author": {"role": "user"}, "create_time": 1760000000, "content": {"content_type": "text", "parts": ["Sort a list?"]}}},
+      "n2": {"id": "n2", "parent": "n1", "children": ["n3"], "message": {"id": "m2", "author": {"role": "assistant"}, "create_time": 1760000010, "content": {"content_type": "text", "parts": ["Use sorted()."]}}},
+      "n3": {"id": "n3", "parent": "n2", "children": ["n4"], "message": {"id": "m3", "author": {"role": "user"}, "create_time": 1760000020, "content": {"content_type": "text", "parts": ["Descending?"]}}},
+      "n4": {"id": "n4", "parent": "n3", "children": [], "message": {"id": "m4", "author": {"role": "assistant"}, "create_time": 1760000030, "content": {"content_type": "text", "parts": ["Add reverse=True."]}}}
+    }
+  },
+  {
+    "title": "Greeting",
+    "conversation_id": "c-bbb",
+    "create_time": 1760001000,
+    "current_node": "g2",
+    "mapping": {
+      "g0": {"id": "g0", "parent": null, "children": ["g1"], "message": {"id": "s", "author": {"role": "system"}, "content": {"content_type": "text", "parts": [""]}}},
+      "g1": {"id": "g1", "parent": "g0", "children": ["g2"], "message": {"id": "g1m", "author": {"role": "user"}, "create_time": 1760001000, "content": {"content_type": "text", "parts": ["Hi"]}}},
+      "g2": {"id": "g2", "parent": "g1", "children": [], "message": {"id": "g2m", "author": {"role": "assistant"}, "create_time": 1760001010, "content": {"content_type": "text", "parts": ["Hello!"]}}}
+    }
+  }
+]

@@ -1,5 +1,25 @@
 # 변경 기록
 
+## 0.3.0 — 2026-10-13
+
+- ChatGPT 데이터 export 지원: `conversations.json` 또는 그것을 담은 `.zip`을 경로로 넣으면 **브라우저 없이** 대량 보존. 한 파일에서 여러 대화를 각각 추출(`mapping` 활성 경로 복원, system/tool·숨김 메시지 제외). `shared_chat_exporter/chatgpt_export.py`
+- ProviderAdapter 레지스트리(`shared_chat_exporter/providers.py`): provider별 normalize·raw 파일명을 한곳에 모음. CLI 분기(load/build/bundle)가 레지스트리 조회로 단순화, 새 provider 추가는 항목 하나
+- 세션 로그 version 드리프트 가드: 테스트 범위 밖 버전이면 경고(Claude Code 2.1.266–2.1.296, Codex cli 0.162.x)
+- 디렉터리 입력에 `.jsonl` 포함 — `sce <claude-projects-dir>/` 로 폴더 전체 세션 export
+- provider별 assistant 라벨(Claude/ChatGPT/Codex)
+- 테스트 fixture 정리: 세션은 `tests/fixtures/sessions/`, export는 `tests/fixtures/exports/`
+
+## 0.2.2 — 2026-10-13
+
+- 로컬 세션 로그 export 지원 (파일 경로 입력에서 자동 판별, 기존 출력·bundle·verify 그대로 사용)
+  - Claude Code: `~/.claude/projects/<proj>/<id>.jsonl`. sidechain은 raw 로그에만 보존하고 경고
+  - Codex: `~/.codex/sessions/**/rollout-*.jsonl`. `reasoning`은 암호화되어 `summary`만 보존(나머지 uncertain), developer·환경 래퍼 메시지는 트랜스크립트 제외
+- 로그는 append 선형 순서로 복원(트리 walk 대신)
+- 메시지 content의 CRLF/CR→LF 정규화(raw 로그는 원본 유지)
+- provider별 assistant 라벨(Claude/ChatGPT/Codex)
+- 로그 포맷은 현재 버전만 테스트: Claude Code `version` 2.1.266–2.1.296, Codex `cli_version` 0.162.x
+- `shared_chat_exporter/sessions.py`, `tests/test_sessions.py`, docs/future-sessions.md
+
 ## 0.2.1 — 2026-10-12
 
 구조를 단순화하고 Python 지원 범위를 넓혔습니다. 기능은 그대로입니다.

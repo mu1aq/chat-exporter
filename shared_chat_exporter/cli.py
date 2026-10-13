@@ -37,13 +37,15 @@ from .chatgpt import (
     ChatGPTError,
     capture_chatgpt,
     chatgpt_share_id,
-    extract_chatgpt,
     validate_chatgpt_url,
 )
-from .exporters import DESCRIPTIONS, EXT, EXT_TO_FORMAT, FORMATS, export
-from .extract import Options, extract
+from .exporters import DESCRIPTIONS, EXT, EXT_TO_FORMAT, FORMATS, assistant_label, export
+from .extract import Options
 from .fetch import METHODS, FetchError, Fetcher, describe_origin
+from .chatgpt_export import detect_chatgpt_export, export_to_snapshot, iter_export_conversations
+from .providers import get_adapter
 from .select import SelectError, select_turns
+from .sessions import detect_session, session_to_snapshot
 from .snapshot import (
     NotAShareLink,
     SnapshotError,
@@ -112,9 +114,9 @@ def resolve_inputs(values: List[str], input_file: Optional[str]) -> Tuple[List[I
             continue
         p = Path(v).expanduser()
         if p.is_dir():
-            files = sorted(x for x in p.iterdir() if x.is_file() and x.suffix.lower() == ".json")
+            files = sorted(x for x in p.iterdir() if x.is_file() and x.suffix.lower() in (".json", ".jsonl"))
             if not files:
-                errors.append(f"{v}: no .json files in the folder.")
+                errors.append(f"{v}: no .json/.jsonl files in the folder.")
             for f in files:
                 add(Item(str(f), "file", path=f))
             continue
@@ -162,6 +164,14 @@ def load_items(items: List[Item], args: argparse.Namespace, ui: UI) -> Tuple[Lis
         for it in items:
             try:
                 provider = "claude"
+                if it.kind == "file" and detect_chatgpt_export(it.path):
+                    count = 0
+                    for raw in iter_export_conversations(it.path):
+                        snap = export_to_snapshot(raw)
+                        loaded.append(Loaded(it, snap, json.dumps(raw, ensure_ascii=False), "file", "chatgpt-export"))
+                        count += 1
+                    ui.success(f"Loaded {count} conversation(s) from export: {it.label}")
+                    continue
                 if it.kind == "file":
                     text, origin = read_text_file(it.path), "file"
                 elif it.kind == "stdin":
@@ -189,7 +199,10 @@ def load_items(items: List[Item], args: argparse.Namespace, ui: UI) -> Tuple[Lis
                     if shares > 1:
                         ui.info(ui.style(f"[{done_shares}/{shares}] ", "dim") + it.label)
                     text, origin = fetcher.get(it.share_id)
-                if it.kind in ("file", "stdin"):
+                session_kind = detect_session(it.path) if it.kind == "file" else None
+                if session_kind:
+                    data, provider = session_to_snapshot(it.path, session_kind), session_kind
+                elif it.kind in ("file", "stdin"):
                     try:
                         candidate = json.loads(text.lstrip("\ufeff"))
                     except ValueError:
@@ -224,7 +237,7 @@ def build_convs(loaded: List[Loaded], args: argparse.Namespace, ui: UI) -> List[
     opts = options_from(args)
     convs = []
     for ld in loaded:
-        conv = extract_chatgpt(ld.data) if ld.provider == "chatgpt" else extract(ld.data, opts)
+        conv = get_adapter(ld.provider).normalize(ld, opts)
         conv["_label"] = ld.item.path.stem if ld.item.path else (ld.item.share_id or "snapshot")
         conv["_raw"] = ld.raw
         for w in conv["warnings"]:
@@ -402,7 +415,7 @@ def save_bundles(convs: List[Dict[str, Any]], root: Path, force: bool, ui: UI) -
                 asset.pop("data", None)
         write_bundle(
             folder, bundle_conv, raw_source=conv.get("_raw"),
-            raw_name="capture.json" if provider == "chatgpt" else "raw.json",
+            raw_name=get_adapter(provider).raw_name,
             transcript=export([conv], "md"), assets=_bundle_assets(conv), provider=provider,
             dropped=preservation.get("dropped"), uncertain=preservation.get("uncertain"),
             limitations=preservation.get("limitations"), extra_files=extra,
@@ -532,7 +545,7 @@ def render_show(conv: Dict[str, Any], st: Style, uni: bool, only: Optional[str],
     bar = "▍" if uni else "|"
     rule_ch = "─" if uni else "-"
     src = conv["source"]
-    assistant = "ChatGPT" if src.get("provider") == "chatgpt" else "Claude"
+    assistant = assistant_label(src.get("provider"))
     out = [st(src["title"] or assistant + " conversation", "bold")]
     meta = [src.get("share_url") or conv.get("_label") or "", _short_time(src.get("created_at")),
             f"{conv['stats']['turns']} turns"]
@@ -633,7 +646,7 @@ def cmd_info(args: argparse.Namespace, ui: UI) -> int:
             ("Created", (src.get("created_at") or "-").replace("T", " ")[:16]),
             ("Turns / messages", f"{s['turns']} / {s['messages']}"
              + (f"  ({s['messages_in_snapshot']} in full snapshot)" if s["messages_in_snapshot"] != s["messages"] else "")),
-            ("Characters", f"user {s['user_chars']:,} · {'ChatGPT' if src.get('provider') == 'chatgpt' else 'Claude'} {s['assistant_chars']:,}"),
+            ("Characters", f"user {s['user_chars']:,} · {assistant_label(src.get('provider'))} {s['assistant_chars']:,}"),
             ("Tool calls", tools),
             ("Attachments", f"{s['attachments']}" + (f"  ({', '.join(names[:5])}{' …' if len(names) > 5 else ''})" if names else "")),
             ("Artifacts", f"{s['artifacts']}" + (f"  ({', '.join(a['title'] for a in c['artifacts'][:5])})" if c["artifacts"] else "")),

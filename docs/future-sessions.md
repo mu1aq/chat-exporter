@@ -1,6 +1,21 @@
-# 향후: 로컬 세션 export (Codex · Claude Code)
+# 로컬 세션 export (Claude Code · Codex 구현됨)
 
-이 문서는 아직 구현되지 않은 설계 계획입니다. 지금의 공개 공유 링크 보존 흐름을, 로컬에 저장된 에이전트 세션 로그까지 **경로만 넣으면** export 할 수 있도록 확장하는 방향을 기록합니다. 동작을 바꾸는 코드는 아직 없으며, 합의 후 단계적으로 추가합니다.
+로컬에 저장된 에이전트 세션 로그를 **경로만 넣으면** export 합니다. 둘 다 `shared_chat_exporter/sessions.py` + `tests/test_sessions.py` 에 구현되어 있고, `sce <session>.jsonl ...` 로 바로 동작하며 파일 입력에서 자동 판별합니다. 로그 포맷은 비공개이고 릴리스마다 바뀔 수 있어 **현재 포맷만 테스트**되어 있습니다(판별은 관대하게, 모르는 타입은 그대로 보존).
+
+- **Claude Code** (`~/.claude/projects/<proj>/<id>.jsonl`): 테스트 기준 로그 `version` 2.1.266–2.1.296(최신 2.1.296). 판별 신호 sessionId+type.
+- **Codex** (`~/.codex/sessions/**/rollout-*.jsonl`): 테스트 기준 `cli_version` 0.162.x. 판별 신호 `session_meta`/`response_item`+payload. `reasoning`은 `encrypted_content`가 암호화되어 복호화 불가 — `summary`만 보존하고 나머지는 manifest `uncertain`. `developer`·환경/지시 래퍼 user 메시지(`<environment_context>` 등)는 트랜스크립트에서 제외(raw 로그엔 보존).
+
+## Claude Code (구현)
+
+`~/.claude/projects/<proj>/<id>.jsonl` 의 `user`/`assistant` 라인을 Claude 스냅샷 모양으로 변환해 기존 `extract()`(턴 분할·tool 페어링·thinking)에 그대로 태웁니다.
+
+- 로그는 **append 선형** 순서입니다. `parentUuid` 트리가 깔끔한 재생성 트리가 아니므로(중간 root 리셋·compaction·sidechain 경계) 트랜스크립트는 **파일 순서**를 따릅니다. 각 메시지를 직전 메시지에 선형으로 연결하고, 원본 `parentUuid`는 메시지 meta(`_cc_parent_uuid`)에 보존합니다.
+- `isSidechain: true`(서브에이전트 사이드 스레드)는 메인 트랜스크립트에서 제외하고 raw 로그에만 남깁니다. 제외 건수는 경고로 알립니다.
+- `aiTitle`→제목, `sessionId`→share_id, `model`→source.model. `share_url`은 없음(None), `source.session_file`에 경로 기록, provider=`claude-code`.
+- bundle의 원본은 `raw.jsonl`로 verbatim 저장.
+- shortcut: 메시지 텍스트 안의 CRLF는 지금은 그대로 보존합니다. CRLF→LF 정규화는 나중 패스에서 처리합니다.
+
+## 목표 (Codex 포함)
 
 ## 목표
 
@@ -34,16 +49,12 @@
 
 ## 모듈 계획
 
+단일 모듈 `shared_chat_exporter/sessions.py` 에 Claude Code·Codex 지원이 모두 들어 있습니다(`detect_session`, `session_to_snapshot`, `finalize_session`). 둘 다 로그를 Claude-snapshot 모양으로 변환해 기존 `extract()`(턴 분할·tool 페어링·thinking)를 재사용합니다. 더 커지면 `sessions/` 패키지로 분리합니다. 규칙(지금 분리 안 함): [[unify-exporters-python]].
+
 ~~~text
 shared_chat_exporter/
-  sessions/
-    __init__.py
-    detect.py      # 경로·첫 줄로 codex / claude-code 판별
-    codex.py       # Codex rollout jsonl -> 공통 conversation
-    claude_code.py # Claude Code transcript jsonl -> 공통 conversation
+  sessions.py        # detect_session + Claude Code·Codex 변환 (구현됨)
 ~~~
-
-각 어댑터는 `load(path) -> conversation(dict)` 하나만 노출합니다. 기존 ChatGPT/Claude 어댑터와 동일한 계약입니다.
 
 ## 매핑 규칙(초안)
 
@@ -63,10 +74,11 @@ shared_chat_exporter/
 
 ## 단계
 
-1. 실제 Codex / Claude Code 세션 jsonl 샘플 1~2개로 스키마 확정.
-2. `sessions/detect.py` + 어댑터 한 개(먼저 Claude Code) 추가, 단위 테스트는 작은 fixture 로.
-3. CLI 파일 입력 경로에 세션 판별 연결, 기존 스냅샷 로더 폴백 유지.
-4. Codex 어댑터 추가.
-5. 문서(cli-reference, providers) 갱신.
+1. ~~스키마 확정~~ (완료)
+2. ~~`sessions.py` + Claude Code 어댑터 + fixture 단위 테스트~~ (완료, `tests/test_sessions.py`)
+3. ~~CLI 파일 입력에 세션 판별 연결, 스냅샷 로더 폴백 유지~~ (완료)
+4. ~~Codex 어댑터 추가 (payload 순회 + 암호화 reasoning은 summary만, 나머지 uncertain)~~ (완료)
+5. ~~CRLF→LF 정규화 패스~~ (완료)
+6. 문서(cli-reference, providers) 갱신 — 세션 입력 사용법 추가.
 
 각 단계는 기존 전체 테스트와 fixture bundle verify 를 깨지 않아야 합니다.
