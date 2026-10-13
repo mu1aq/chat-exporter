@@ -2,19 +2,13 @@
 
 ## import 경로
 
-새 코드의 권장 import:
+모든 구현은 단일 패키지 `shared_chat_exporter`에 있습니다.
 
 ~~~python
 import shared_chat_exporter
 ~~~
 
-기존 호환 import:
-
-~~~python
-import shared_chat_exporter
-~~~
-
-shared_chat_exporter는 기존 공개 API를 다시 export합니다. 공급자 라우터는 shared_chat_exporter.router에서 제공합니다.
+최상위에서 공개 API를 export하고, 공급자 라우터는 `shared_chat_exporter.router`, 로컬 세션·export 어댑터는 각각 `shared_chat_exporter.sessions`, `shared_chat_exporter.chatgpt_export` 에 있습니다.
 
 ## 버전
 
@@ -22,7 +16,7 @@ shared_chat_exporter는 기존 공개 API를 다시 export합니다. 공급자 �
 from shared_chat_exporter import __version__
 ~~~
 
-현재 버전은 0.2.0입니다.
+현재 버전은 0.3.0입니다.
 
 ## ChatGPT URL
 
@@ -212,6 +206,44 @@ if not result["ok"]:
 ~~~
 
 audit dict를 직접 주고 base_dir을 별도로 지정할 수도 있습니다.
+
+## 로컬 세션 (Claude Code · Codex)
+
+~~~python
+from shared_chat_exporter.sessions import detect_session, session_to_snapshot, finalize_session
+from shared_chat_exporter import Options, extract
+
+kind = detect_session("session.jsonl")      # "claude-code" | "codex" | None
+snap = session_to_snapshot("session.jsonl")  # Claude-snapshot 모양 dict
+conv = finalize_session(extract(snap, Options(tools=True, thinking=True)), "session.jsonl", snap)
+~~~
+
+`session_to_snapshot`는 로그를 snapshot 모양으로 바꾸고, `extract`가 턴·도구·thinking을 구성하며, `finalize_session`이 provider 필드와 경고(sidechain·버전 드리프트)·uncertain(암호화 reasoning)을 채웁니다.
+
+## ChatGPT 데이터 export
+
+~~~python
+from shared_chat_exporter.chatgpt_export import (
+    detect_chatgpt_export, iter_export_conversations, export_to_snapshot, finalize_export,
+)
+
+if detect_chatgpt_export("conversations.json"):
+    for raw in iter_export_conversations("conversations.json"):   # .zip도 가능
+        conv = finalize_export(extract(export_to_snapshot(raw), Options()), "conversations.json")
+~~~
+
+한 파일에서 여러 대화를 돌려줍니다. `mapping` 활성 경로를 복원하고 system/tool·숨김 메시지는 제외합니다.
+
+## 공급자 레지스트리
+
+~~~python
+from shared_chat_exporter.providers import get_adapter
+
+adapter = get_adapter("codex")   # claude | chatgpt | claude-code | codex | chatgpt-export
+print(adapter.name, adapter.raw_name)
+~~~
+
+CLI가 입력을 받은 뒤 provider별 normalize와 bundle 원본 파일명을 이 레지스트리로 결정합니다.
 
 ## 공급자 라우터
 

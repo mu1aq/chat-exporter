@@ -26,7 +26,10 @@ ChatGPT와 Claude 공개 공유 대화를 보존하는 독립형 Python 프로�
 - [PowerShell 의존성 설치 스크립트](install.ps1)
 - [Linux·macOS 의존성 설치 스크립트](install.sh)
 - [CLI 구현](shared_chat_exporter/cli.py)
+- [공급자 레지스트리](shared_chat_exporter/providers.py)
 - [ChatGPT 캡처 구현](shared_chat_exporter/chatgpt.py)
+- [ChatGPT export 구현](shared_chat_exporter/chatgpt_export.py)
+- [로컬 세션(Claude Code·Codex) 구현](shared_chat_exporter/sessions.py)
 - [Claude 추출 구현](shared_chat_exporter/extract.py)
 - [보존 bundle 구현](shared_chat_exporter/bundle.py)
 - [무결성 검증 구현](shared_chat_exporter/audit.py)
@@ -96,6 +99,17 @@ python chat2file.py "https://claude.ai/share/SHARE_ID" --bundle out/claude --too
 sce "https://chatgpt.com/share/SHARE_ID" --bundle out/chatgpt --browser-channel chrome --screenshot
 sce "https://claude.ai/share/SHARE_ID" --bundle out/claude --tools --thinking
 sce verify out/chatgpt
+~~~
+
+## 로컬 세션·export (공유 링크 없이)
+
+Claude Code·Codex 세션 로그와 ChatGPT 데이터 export도 **파일 경로**로 그대로 보존합니다. 네트워크·브라우저가 필요 없고 자동 판별됩니다. 자세한 동작은 [공급자 문서](docs/providers.md).
+
+~~~bash
+sce ~/.claude/projects/<proj>/<id>.jsonl -f md          # Claude Code 세션
+sce ~/.codex/sessions/.../rollout-<id>.jsonl --bundle out/codex   # Codex 롤아웃
+sce ~/.claude/projects/<proj>/ -o out/                  # 폴더 전체 일괄
+sce chatgpt-export.zip -o out/                          # ChatGPT export → 대화마다 파일
 ~~~
 
 일반 파일 출력은 JSON, JSONL, CSV, Markdown, TXT, chat JSONL을 지원합니다. 모든 원문·분기·Artifact 버전·자산·감사 기록을 함께 남기려면 --bundle을 사용하세요.

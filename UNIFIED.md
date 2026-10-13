@@ -105,6 +105,15 @@ sce URL --format chat -o fine-tuning.jsonl
 
 공개 snapshot을 원문 그대로 저장한 뒤 UUID/부모 관계로 전체 메시지 그래프를 복원합니다. 활성 경로와 대안 브랜치를 모두 보존하고, 도구 사용·결과, thinking 블록, 인용, 파일/첨부 메타데이터와 Artifact 생성·갱신 이력을 별도로 기록합니다.
 
+### 로컬 세션·export (공유 링크 없이)
+
+공개 공유 링크 외에 로컬 로그도 파일 경로로 보존합니다. 네트워크·브라우저가 필요 없고 자동 판별됩니다.
+
+- **Claude Code** (`~/.claude/projects/<proj>/<id>.jsonl`) · **Codex** (`~/.codex/sessions/**/rollout-*.jsonl`): append 선형 순서로 복원. Codex의 암호화된 reasoning은 summary만 보존하고 uncertain에 남깁니다. 로그 포맷은 현재 버전만 테스트합니다.
+- **ChatGPT 데이터 export** (`conversations.json` 또는 `.zip`): 브라우저 없이 한 파일에서 여러 대화를 추출합니다.
+
+자세한 동작은 [공급자 문서](docs/providers.md)와 [향후 세션 export](docs/future-sessions.md)를 보세요.
+
 ## PNG와 첨부파일
 
 공개 응답에 이미지 바이트나 접근 가능한 이미지 URL이 있으면 원본 확장자와 MIME을 유지해 assets에 저장합니다. 화면에만 남은 시각 정보는 screenshot.png로 보존할 수 있습니다. 인증이 필요한 URL, 만료된 URL, CORS/서비스 제한, 용량 제한 때문에 원본을 받지 못하면 해당 URL과 실패 이유가 manifest에 남습니다.

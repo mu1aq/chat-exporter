@@ -49,10 +49,13 @@ common conversation dict
 | shared_chat_exporter/router.py | 공급자 판별과 공통 진입점 |
 | shared_chat_exporter/__main__.py | python -m 진입점 |
 | shared_chat_exporter/cli.py | 명령 parser와 orchestration |
+| providers.py | provider별 normalize·raw 파일명 레지스트리 (ProviderAdapter) |
 | chatgpt.py | 브라우저 capture, DOM/JSON 정규화, 자산 |
+| chatgpt_export.py | ChatGPT 데이터 export(conversations.json/.zip) → conversation |
+| sessions.py | Claude Code·Codex 로컬 세션 로그 → snapshot 변환 |
 | snapshot.py | Claude ID·URL·snapshot parser |
 | fetch.py | Claude cache/direct/browser/manual 획득 |
-| extract.py | Claude 메시지·분기·도구·Artifact 정규화 |
+| extract.py | Claude 메시지·분기·도구·Artifact 정규화 (세션·export도 재사용) |
 | html2md.py | ChatGPT 렌더링 HTML의 Markdown 파생 |
 | exporters.py | JSONL, JSON, CSV, MD, TXT, chat |
 | bundle.py | provider-neutral archive writer |
@@ -91,6 +94,19 @@ share URL/ID
   → common conversation
   → derivative output 또는 bundle
 ~~~
+
+### 로컬 세션·export (파일 경로)
+
+~~~text
+file path
+  → detect (claude-code / codex / chatgpt-export, else snapshot/capture)
+  → sessions.py 또는 chatgpt_export.py 가 snapshot 모양으로 변환
+  → extract() 재사용 (턴 분할·tool 페어링·thinking)
+  → common conversation (export는 한 파일 → 여러 conversation)
+  → derivative output 또는 bundle
+~~~
+
+입력 방식에 상관없이 공통 conversation이 만들어진 뒤에는 `providers.py`의 ProviderAdapter 레지스트리가 provider별 normalize와 bundle 원본 파일명을 결정합니다. 새 공급자는 레지스트리 항목 하나로 추가합니다.
 
 ## 원본과 파생본
 

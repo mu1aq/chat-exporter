@@ -42,10 +42,15 @@ shared-chat-export
 - Claude 공유 ID
 - Claude snapshot API URL
 - 로컬 snapshot 또는 capture JSON 파일
-- JSON 파일이 있는 디렉터리
+- Claude Code 세션 로그 `.jsonl` (`~/.claude/projects/<proj>/<id>.jsonl`)
+- Codex 롤아웃 `.jsonl` (`~/.codex/sessions/**/rollout-*.jsonl`)
+- ChatGPT 데이터 export `conversations.json` 또는 그것을 담은 `.zip`
+- `.json` 또는 `.jsonl` 파일이 있는 디렉터리 (폴더 전체 일괄)
 - 와일드카드
 - 표준 입력을 뜻하는 -
 - -i 또는 --input-file에 지정한 목록 파일
+
+로컬 세션·export 입력은 네트워크·브라우저 없이 처리하며 파일에서 자동 판별합니다. 자세한 동작은 [공급자 문서](providers.md)를 보세요.
 
 목록 파일은 한 줄에 하나를 쓰며, 빈 줄과 #로 시작하는 줄을 무시합니다. 공백 뒤 #은 줄 끝 주석입니다.
 
@@ -148,6 +153,15 @@ ChatGPT에서는 --via를 사용하지 않고 항상 전용 Playwright 캡처를
 shared-chat-export URL -o 원하는이름.json
 shared-chat-export URL -f md -o reports/session-01.txt
 shared-chat-export URL --bundle archives/원하는폴더명
+~~~
+
+로컬 세션·export (네트워크·브라우저 불필요):
+
+~~~console
+shared-chat-export ~/.claude/projects/<proj>/<id>.jsonl -f md
+shared-chat-export ~/.codex/sessions/2026/.../rollout-<id>.jsonl --bundle out/codex
+shared-chat-export ~/.claude/projects/<proj>/ -o out/            # 폴더 전체 일괄
+shared-chat-export chatgpt-export.zip -o out/                    # 여러 대화 → 여러 파일
 ~~~
 
 -f가 있으면 파일 확장자보다 -f가 우선합니다. 새 출력 디렉터리를 뜻하려면 경로 끝에 slash를 붙이거나 디렉터리를 먼저 만듭니다.

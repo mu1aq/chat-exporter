@@ -79,6 +79,6 @@ shared_chat_exporter/
 3. ~~CLI 파일 입력에 세션 판별 연결, 스냅샷 로더 폴백 유지~~ (완료)
 4. ~~Codex 어댑터 추가 (payload 순회 + 암호화 reasoning은 summary만, 나머지 uncertain)~~ (완료)
 5. ~~CRLF→LF 정규화 패스~~ (완료)
-6. 문서(cli-reference, providers) 갱신 — 세션 입력 사용법 추가.
+6. ~~문서(cli-reference, providers, architecture, python-api, README) 갱신~~ (완료)
 
 각 단계는 기존 전체 테스트와 fixture bundle verify 를 깨지 않아야 합니다.
