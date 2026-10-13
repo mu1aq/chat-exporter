@@ -1,6 +1,6 @@
 # 문서 인덱스
 
-이 디렉터리는 Shared Chat Exporter 0.4.x의 사용자·운영·개발 문서입니다. 모든 파일 링크는 현재 프로젝트 폴더 내부의 상대경로입니다.
+이 디렉터리는 Shared Chat Exporter 0.5.x의 사용자·운영·개발 문서입니다. 모든 파일 링크는 현재 프로젝트 폴더 내부의 상대경로입니다.
 
 ## 처음 사용하는 경우
 
@@ -43,4 +43,4 @@ python -m shared_chat_exporter --version
 
 ## 버전 범위
 
-이 문서는 프로젝트 버전 0.4.x, manifest schemaVersion 1, audit schemaVersion 1을 설명합니다. JSON Schema의 추가 필드는 호환 가능하게 확장될 수 있으므로 소비자는 모르는 필드를 무시해야 합니다.
+이 문서는 프로젝트 버전 0.5.x, manifest schemaVersion 1, audit schemaVersion 1을 설명합니다. JSON Schema의 추가 필드는 호환 가능하게 확장될 수 있으므로 소비자는 모르는 필드를 무시해야 합니다.

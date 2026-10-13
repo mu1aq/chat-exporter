@@ -195,6 +195,31 @@ class AssetsTest(unittest.TestCase):
             self.assertNotIn("v1", arts[0]["content"])
 
 
+class CodexDiffTest(unittest.TestCase):
+    def test_apply_patch_reconstructs_file_versions(self):
+        add = r'const p="*** Begin Patch\n*** Add File: a.py\n+x = 1\n+y = 2\n*** End Patch";await exec(p)'
+        upd = r'const p="*** Begin Patch\n*** Update File: a.py\n@@\n x = 1\n-y = 2\n+y = 3\n*** End Patch";await exec(p)'
+        with TempDir() as d:
+            p = d / "rollout-x.jsonl"
+            p.write_text("\n".join(json.dumps(x) for x in [
+                {"type": "session_meta", "payload": {"session_id": "cx", "cli_version": "0.162.1"}},
+                {"type": "response_item", "payload": {"type": "message", "role": "user",
+                 "content": [{"type": "input_text", "text": "edit a.py"}]}},
+                {"type": "response_item", "payload": {"type": "custom_tool_call", "call_id": "c1", "name": "exec", "input": add}},
+                {"type": "response_item", "payload": {"type": "custom_tool_call_output", "call_id": "c1", "output": "ok"}},
+                {"type": "response_item", "payload": {"type": "custom_tool_call", "call_id": "c2", "name": "exec", "input": upd}},
+                {"type": "response_item", "payload": {"type": "custom_tool_call_output", "call_id": "c2", "output": "ok"}},
+            ]), encoding="utf-8")
+            snap = session_to_snapshot(p)
+            conv = finalize_session(extract(snap, Options(tools=True)), p, snap)
+            arts = conv["artifacts"]
+            self.assertEqual(len(arts), 1)
+            self.assertEqual(arts[0]["key"], "a.py")
+            self.assertEqual(arts[0]["versions"], 2)
+            self.assertEqual(arts[0]["content"], "x = 1\ny = 3\n")
+            self.assertEqual(conv["stats"]["artifacts"], 1)
+
+
 class CliTest(unittest.TestCase):
     def test_markdown_export(self):
         r = run_cli(str(SESSION), "-f", "md", "--tools", "--thinking")

@@ -19,6 +19,7 @@ import json
 from pathlib import Path
 from typing import Any, Dict, Iterator, List, Optional, Union
 
+from .apply_patch import extract_patches, reconstruct
 from .extract import ROOT_PARENT
 
 CLAUDE_CODE = "claude-code"
@@ -134,7 +135,7 @@ def _build_snapshot(messages: List[Dict[str, Any]], meta: Dict[str, Any]) -> Dic
         "updated_at": meta.get("updated_at"),
         "chat_messages": messages,
     }
-    for k in ("model", "_provider", "_warnings", "_uncertain", "_assets"):
+    for k in ("model", "_provider", "_warnings", "_uncertain", "_assets", "_artifacts"):
         if meta.get(k):
             snap[k] = meta[k]
     return snap
@@ -214,6 +215,7 @@ def _codex_text(val: Any) -> str:
 
 def _codex_snapshot(path: Path) -> Dict[str, Any]:
     messages: List[Dict[str, Any]] = []
+    patch_texts: List[str] = []
     session_id = title = model = cli_version = None
     first_ts = last_ts = None
     skipped_context = encrypted_reasoning = 0
@@ -259,6 +261,9 @@ def _codex_snapshot(path: Path) -> Dict[str, Any]:
             if summary.strip():
                 add("assistant", {"type": "thinking", "thinking": summary}, ts)
         elif pt in ("custom_tool_call", "function_call"):
+            raw = payload.get("input") if isinstance(payload.get("input"), str) else payload.get("arguments")
+            if isinstance(raw, str):
+                patch_texts.extend(extract_patches(raw))
             raw_input = payload.get("input")
             if raw_input is None and isinstance(payload.get("arguments"), str):
                 try:
@@ -288,10 +293,14 @@ def _codex_snapshot(path: Path) -> Dict[str, Any]:
     drift = _drift_warning("Codex", cli_version, TESTED_CODEX_CLI_VERSION)
     if drift:
         warnings.append(drift)
+    artifacts, unmatched = reconstruct(patch_texts)
+    if unmatched:
+        warnings.append(f"{unmatched} apply_patch edit(s) could not be reconstructed (edited a file with no "
+                        "in-session base, or context did not match); the exact patches remain in the raw log.")
     return _build_snapshot(messages, {
         "uuid": session_id or path.stem.replace("rollout-", ""), "title": title, "model": model,
         "created_at": first_ts, "updated_at": last_ts,
-        "_provider": CODEX, "_warnings": warnings, "_uncertain": uncertain,
+        "_provider": CODEX, "_warnings": warnings, "_uncertain": uncertain, "_artifacts": artifacts,
     })
 
 
@@ -328,4 +337,8 @@ def finalize_session(conv: Dict[str, Any], path: Union[str, Path], snap: Dict[st
         conv.setdefault("preservation", {}).setdefault("uncertain", []).extend(unc)
     if snap.get("_assets"):
         conv.setdefault("assets", []).extend(snap["_assets"])
+    if snap.get("_artifacts"):
+        conv.setdefault("artifacts", []).extend(snap["_artifacts"])
+        if isinstance(conv.get("stats"), dict):
+            conv["stats"]["artifacts"] = len(conv["artifacts"])
     return conv

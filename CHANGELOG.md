@@ -1,5 +1,11 @@
 # 변경 기록
 
+## 0.5.0 — 2026-10-13
+
+- Codex `apply_patch` 파일 버전 복원: `exec` 호출 안의 `*** Begin/End Patch`를 순서대로 적용해 세션 안에서 생성된 파일을 `artifacts/`로 재구성. 세션 밖 기존 파일 편집은 베이스가 로그에 없어 복원하지 못하며 개수를 경고로 보고(날조 안 함). `shared_chat_exporter/apply_patch.py`
+- ChatGPT export 이미지: `.zip` 안 파일을 `image_asset_pointer`와 대조해 `assets/`에 원본 바이트로 저장. 바이트 없으면 메타데이터·사유만
+- 테스트: `tests/test_apply_patch.py`, Codex diff·export 이미지 통합
+
 ## 0.4.0 — 2026-10-13
 
 - `--redact`: 감지된 비밀(API 키·GitHub/AWS/Google/Slack 토큰·JWT·private key 블록·`key=value` 비밀)을 `[REDACTED:종류]`로 마스킹. 정규화 본문과 bundle raw까지 적용되어 결과는 byte-verbatim이 아니며 경고를 남김. 기본 off. `shared_chat_exporter/redact.py`

@@ -42,7 +42,7 @@ from .chatgpt import (
 from .exporters import DESCRIPTIONS, EXT, EXT_TO_FORMAT, FORMATS, assistant_label, export
 from .extract import Options
 from .fetch import METHODS, FetchError, Fetcher, describe_origin
-from .chatgpt_export import detect_chatgpt_export, export_to_snapshot, iter_export_conversations
+from .chatgpt_export import detect_chatgpt_export, export_to_snapshot, iter_export_conversations, zip_asset_index
 from .providers import get_adapter
 from .redact import redact_obj
 from .select import SelectError, select_turns
@@ -166,9 +166,10 @@ def load_items(items: List[Item], args: argparse.Namespace, ui: UI) -> Tuple[Lis
             try:
                 provider = "claude"
                 if it.kind == "file" and detect_chatgpt_export(it.path):
+                    asset_index = zip_asset_index(it.path)
                     count = 0
                     for raw in iter_export_conversations(it.path):
-                        snap = export_to_snapshot(raw)
+                        snap = export_to_snapshot(raw, asset_index)
                         loaded.append(Loaded(it, snap, json.dumps(raw, ensure_ascii=False), "file", "chatgpt-export"))
                         count += 1
                     ui.success(f"Loaded {count} conversation(s) from export: {it.label}")

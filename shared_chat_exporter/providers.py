@@ -52,7 +52,7 @@ def _session(ld: Any, opts: Options) -> Dict[str, Any]:
 
 
 def _chatgpt_export(ld: Any, opts: Options) -> Dict[str, Any]:
-    return finalize_export(extract(ld.data, opts), ld.item.path)
+    return finalize_export(extract(ld.data, opts), ld.item.path, ld.data)
 
 
 REGISTRY: Dict[str, _Adapter] = {

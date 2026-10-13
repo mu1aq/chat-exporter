@@ -142,7 +142,7 @@ artifacts 도구의 create와 update 명령을 시간 순서로 적용합니다.
 
 - 로그는 append 선형 순서라 트랜스크립트는 파일 순서를 따릅니다(트리 walk 아님). 원본 `parentUuid`는 메시지 meta에 보존.
 - Claude Code: `user`/`assistant` 라인의 content block(text/thinking/tool_use/tool_result)을 그대로 재사용. `isSidechain`은 raw 로그에만 남기고 경고. 사용자 메시지의 base64 이미지 블록은 `assets/`에 바이트로 저장. `Write`/`Edit`(및 str_replace류) 도구 호출은 파일 버전으로 복원해 `artifacts/`에 vNN으로 기록(모르는 이름의 편집 도구, 예: MultiEdit은 현재 제외).
-- Codex: `response_item` payload를 순회해 message·reasoning·tool call/output을 매핑. `reasoning.encrypted_content`는 복호화 불가라 `summary`만 보존하고 나머지는 manifest `uncertain`. developer·환경 래퍼 메시지는 트랜스크립트에서 제외(raw엔 보존).
+- Codex: `response_item` payload를 순회해 message·reasoning·tool call/output을 매핑. `reasoning.encrypted_content`는 복호화 불가라 `summary`만 보존하고 나머지는 manifest `uncertain`. developer·환경 래퍼 메시지는 트랜스크립트에서 제외(raw엔 보존). `exec` 도구 호출에 들어 있는 `apply_patch`(`*** Begin/End Patch`)를 순서대로 적용해 세션 안에서 만들어진 파일의 버전을 `artifacts/`로 복원합니다. 세션 밖에서 이미 존재하던 파일을 편집한 경우 시작 내용이 로그에 없어 복원하지 못하며(개수를 경고로 보고), 정확한 패치는 raw 로그에 남습니다.
 - 메시지 content의 CRLF/CR은 LF로 정규화(raw 로그는 원본 바이트 유지).
 - 로그 포맷은 비공개라 릴리스마다 바뀔 수 있어 **현재 버전만 테스트**(Claude Code `version` 2.1.266–2.1.296, Codex `cli_version` 0.162.x). 범위 밖이면 경고합니다.
 - 디렉터리를 넣으면 폴더 안의 `.json`/`.jsonl`을 모두 입력으로 다룹니다 — `sce <claude-projects-dir>/ -o out/` 로 세션 일괄 export.
@@ -152,7 +152,7 @@ artifacts 도구의 create와 update 명령을 시간 순서로 적용합니다.
 - 계정 설정에서 내려받은 데이터 export의 `conversations.json`(또는 그 `.zip`)을 읽습니다. 공유 링크·브라우저가 필요 없고 **한 파일에서 여러 대화**를 각각 추출합니다.
 - 각 대화의 `mapping` 트리에서 `current_node`→root 활성 경로를 복원합니다. `current_node`가 없으면 `create_time` 순서로 대체.
 - `system`·`tool` 역할과 숨김(`is_visually_hidden_from_conversation`) 메시지는 트랜스크립트에서 제외합니다.
-- tool·멀티모달(이미지) block은 현재 텍스트만 반영합니다(이미지 asset 복원은 향후).
+- `.zip` export 안의 이미지는 메시지의 `image_asset_pointer`와 zip 내 파일을 대조해 `assets/`에 원본 바이트로 저장합니다. 바이트가 없는 경우(bare `conversations.json` 등)는 메타데이터와 사유만 남깁니다. 음성 등 그 밖의 멀티모달 블록은 현재 텍스트만 반영합니다.
 
 ## 공통 보존 원칙
 

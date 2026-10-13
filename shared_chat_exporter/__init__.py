@@ -12,7 +12,7 @@ For ChatGPT pages use :func:`capture_and_extract`, which drives a browser and
 returns the same conversation shape.
 """
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 from .snapshot import (  # noqa: E402
     NotAShareLink,
