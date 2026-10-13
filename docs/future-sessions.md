@@ -58,18 +58,19 @@ shared_chat_exporter/
 
 ## 매핑 규칙(초안)
 
-공통 모델로 옮길 때의 최소 규칙입니다. 세부 필드는 실제 로그 샘플로 확정합니다.
+공통 모델로 옮기는 규칙(구현 반영):
 
-- 한 줄(JSONL event) = 한 message. 연속한 user→assistant 묶음 = 한 turn.
-- tool 호출/결과: 기존 Claude 경로와 같이 `tool_calls` 블록으로 보존(이름·입력·출력).
-- thinking/reasoning event: 있으면 `thinking` 블록으로 보존, 없으면 생략(가짜로 만들지 않음).
+- Claude Code는 대화 라인(`user`/`assistant`)만 쓰고 메타 라인(`mode`, `bridge-session`, `ai-title`, `file-history-*` 등)은 걸러낸다. Codex는 `response_item` payload(message/reasoning/tool call·output)를 순서대로 읽는다.
+- tool 호출/결과: `tool_calls` 블록으로 보존(이름·입력·출력), id로 페어링.
+- thinking/reasoning: 있으면 `thinking`으로 보존, 없으면 생략(가짜로 만들지 않음). Codex reasoning은 암호화 부분 제외하고 summary만.
+- 파일 편집: Claude Code Write/Edit, Codex apply_patch를 파일 버전으로 복원해 `artifacts/`에 기록. 이미지는 `assets/`.
 - 원본 jsonl 바이트는 bundle 의 `raw.jsonl` 로 그대로 저장(verbatim). 해시는 `audit.json`.
-- 가져올 수 없는 것(이미 로그에 없는 첨부 원본 등)은 `manifest.json` 의 `dropped`/`uncertain` 에 이유와 함께 남긴다.
+- 가져올 수 없는 것(세션 밖 파일 편집의 베이스, 암호화 reasoning 등)은 `manifest.json` 의 `dropped`/`uncertain` 에 이유와 함께 남긴다.
 
 ## 보안 경계
 
 - 로컬 파일만 읽고 쓴다. 세션 로그 안의 URL 을 **자동 재요청하지 않는다**(공개 공유 자산 처리와 동일 원칙).
-- 세션 로그에는 비밀키·토큰이 섞일 수 있다. 기본은 원문 보존이되, `--redact` 같은 옵션으로 알려진 토큰 패턴만 마스킹하는 안을 함께 검토한다(가짜 기능 추가 금지, 실제 필요 확인 후).
+- 세션 로그에는 비밀키·토큰이 섞일 수 있다. 기본은 원문 보존이고, `--redact`로 알려진 고정밀 패턴(API 키·JWT·private key 등)을 마스킹한다(구현됨).
 - 경로는 사용자가 직접 지정한 것만 처리하고, 디렉터리 전체 스캔은 명시적으로 요청할 때만 한다.
 
 ## 단계

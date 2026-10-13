@@ -15,7 +15,7 @@ shared-chat-export verify out/archive
 
 ~~~text
 archive/
-├── raw.json 또는 capture.json
+├── raw.json / capture.json / raw.jsonl
 ├── conversation.json
 ├── transcript.md
 ├── page.html
@@ -36,7 +36,8 @@ archive/
 | 파일 | 언제 생성되는가 | 역할 |
 |---|---|---|
 | raw.json | Claude | 공개 snapshot 원문 |
-| capture.json | ChatGPT | DOM, 네트워크 응답, 미디어를 포함한 브라우저 캡처 원문 |
+| capture.json | ChatGPT 공유 | DOM, 네트워크 응답, 미디어를 포함한 브라우저 캡처 원문 |
+| raw.jsonl | 로컬 세션(Claude Code·Codex) | 세션 로그 원문(JSON Lines) |
 | conversation.json | 항상 | 공급자 공통 정규화 구조 |
 | transcript.md | CLI bundle | 사람이 읽는 활성 경로 파생본 |
 | page.html | ChatGPT | 캡처 종료 시점의 렌더링 DOM |
@@ -57,7 +58,7 @@ archive/
 
 | 필드 | 타입 | 설명 |
 |---|---|---|
-| provider | string | chatgpt 또는 claude |
+| provider | string | claude, chatgpt, claude-code, codex (ChatGPT export는 chatgpt) |
 | source | object | 공급자, 공유 ID·URL, 제목, 시간 |
 | options | object | 추출 옵션 |
 | turns | array | 사람이 읽기 쉬운 user/assistant 턴 |
@@ -86,7 +87,7 @@ archive/
 - created_at
 - updated_at
 
-ChatGPT에는 final_url이 추가될 수 있습니다. 시간 정보가 공개 자료에 없으면 null입니다.
+ChatGPT 공유에는 final_url이, 로컬 세션에는 session_file, ChatGPT export에는 export_file이 추가될 수 있습니다. 로컬 입력은 share_url이 null입니다. 시간 정보가 공개 자료에 없으면 null입니다.
 
 ### turns
 
@@ -169,6 +170,8 @@ Claude Artifact의 일반 구조:
 - history: version, action, content를 가진 배열
 
 bundle은 history 또는 versions 배열의 모든 항목을 artifacts/KEY/vNN.ext로 쓰고 latest.ext와 meta.json을 만듭니다. 적용할 원문을 찾지 못한 update는 artifact_events와 warnings에 기록합니다.
+
+같은 구조로 로컬 세션에서 복원한 파일도 담깁니다. Claude Code 세션의 Write/Edit(및 str_replace류) 도구 호출, Codex 세션의 `apply_patch`가 만든 파일을 버전별로 기록합니다. 세션 밖에 이미 있던 파일의 편집은 베이스가 로그에 없어 복원하지 못하고 그 개수를 warnings로 보고합니다.
 
 ### assets
 

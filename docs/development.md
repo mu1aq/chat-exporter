@@ -27,10 +27,13 @@ python -m compileall -q shared_chat_exporter tests chat2file.py
 - ChatGPT DOM/structured 비교
 - multiline user input
 - PNG byte 보존과 상대 URL
-- exporter 형식
+- exporter 형식 (JSONL/JSON/CSV/MD/TXT/chat/HTML)
 - bundle 경로 안전성과 audit
 - CLI command, overwrite guard, cache
-- provider router
+- provider router와 ProviderAdapter 레지스트리
+- 로컬 세션(Claude Code·Codex)·ChatGPT export 입력 판별과 변환
+- 세션 이미지→assets, Claude Code Write/Edit·Codex apply_patch 파일 버전 복원
+- --redact 비밀 마스킹
 - 문서 내부 링크와 JSON Schema
 
 일부 fetch test의 의도된 HTTP 403·404 mock은 Python 버전에 따라 ResourceWarning을 표시할 수 있으나 테스트 실패는 아닙니다.
@@ -42,20 +45,21 @@ tests/fixtures:
 - basic.json: 기본 Claude 대화
 - rich.json: 분기, 첨부, thinking, web search, Artifact create/update
 - api_style.json: API style tool result와 file metadata
+- sessions/: Claude Code·Codex 세션 로그 합성 fixture
+- exports/conversations.json: ChatGPT 데이터 export 합성 fixture
 
-실제 private 대화나 secret을 fixture에 넣지 않습니다.
+세션·export fixture는 디렉터리 입력 테스트(최상위 `.json`만 글롭)와 섞이지 않도록 하위 디렉터리에 둡니다. 실제 private 대화나 secret을 fixture에 넣지 않습니다.
 
 ## CI
 
 .github/workflows/ci.yml:
 
 - Ubuntu, macOS, Windows
-- Python 3.13, 3.14
+- Python 3.10, 3.11, 3.12, 3.13, 3.14
 - package 설치
 - 전체 unit test
-- CLI smoke
-- universal router
-- Windows PowerShell 또는 POSIX launcher
+- CLI smoke (cse --version, info, get)
+- universal router smoke (python chat2file.py --detect)
 
 브라우저 실제 네트워크 E2E는 외부 서비스 layout과 네트워크 변동 때문에 기본 CI에 포함하지 않습니다.
 
@@ -118,8 +122,8 @@ manifest와 audit는 별도 schemaVersion을 가집니다. 프로젝트 버전�
 3. unit test와 compileall
 4. Markdown 내부 링크 검사
 5. schemas JSON parsing과 required key 검사
-6. Windows CMD·PowerShell detect smoke
-7. Linux/macOS sh launcher CI
+6. python chat2file.py --detect smoke (3개 OS)
+7. 로컬 세션·export 입력 smoke
 8. fixture bundle 생성과 verify
 9. 가능하면 공개 ChatGPT·Claude E2E
 10. wheel/sdist 설치 smoke

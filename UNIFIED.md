@@ -91,9 +91,10 @@ sce URL -o turns.jsonl
 sce URL -o turns.csv
 sce URL -o transcript.txt
 sce URL --format chat -o fine-tuning.jsonl
+sce URL -o chat.html
 ~~~
 
-지원 포맷은 JSON, JSONL, CSV, Markdown, 일반 텍스트, chat JSONL입니다. 완전 보존이 목적이면 단일 파생 파일이 아니라 반드시 --bundle을 사용하세요.
+지원 포맷은 JSON, JSONL, CSV, Markdown, 일반 텍스트, chat JSONL, HTML(접을 수 있는 thinking·도구)입니다. 비밀/토큰을 가리려면 `--redact`를 붙입니다(결과는 byte-verbatim 아님). 완전 보존이 목적이면 단일 파생 파일이 아니라 반드시 --bundle을 사용하세요.
 
 ## 공급자별 처리
 

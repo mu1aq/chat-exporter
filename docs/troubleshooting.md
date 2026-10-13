@@ -158,6 +158,14 @@ Set-ExecutionPolicy -Scope Process Bypass
 
 Windows는 native clipboard API를 사용합니다. Linux·WSL·macOS는 환경별 pbcopy/pbpaste, xclip, xsel, wl-copy/wl-paste, clip.exe, powershell 같은 backend가 필요할 수 있습니다. --no-clipboard와 --watch-dir로 다운로드 파일 감지만 사용할 수도 있습니다.
 
+## 로컬 세션·export 입력
+
+- 파일이 세션으로 인식되지 않음: Claude Code는 `.jsonl`(라인에 sessionId+type), Codex는 `rollout-*.jsonl`(`session_meta`/`response_item`), ChatGPT export는 `conversations.json` 또는 그것을 담은 `.zip`이어야 합니다. 그 외 JSON은 기존 snapshot/capture 로더로 처리합니다.
+- "log version ... outside the tested range" 경고: 테스트한 포맷 버전(Claude Code 2.1.266–2.1.296, Codex cli 0.162.x) 밖이라는 뜻입니다. 대개 동작하지만 일부 필드가 달라질 수 있습니다. 결과를 확인하고 이상하면 이슈로 보고하세요.
+- "apply_patch edit(s) could not be reconstructed": 세션 밖에 이미 있던 파일을 편집한 경우입니다. 시작 내용이 로그에 없어 복원할 수 없으며 정확한 패치는 raw 로그에 남습니다. 날조하지 않습니다.
+- Codex 사고 과정이 비어 있음: `reasoning.encrypted_content`는 복호화할 수 없어 `summary`만 보존합니다(manifest `uncertain`).
+- 이미지가 assets에 없음: Claude Code는 base64 이미지 블록만, ChatGPT export는 `.zip` 안에 실제 파일이 있을 때만 바이트를 저장합니다. bare `conversations.json`이면 메타데이터·사유만 남습니다.
+
 ## 버그 보고용 최소 자료
 
 민감정보 없이 다음을 준비합니다.

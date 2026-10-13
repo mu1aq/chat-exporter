@@ -2,6 +2,8 @@
 
 이 문서는 현재 동작을 바꾸지 않고 구조를 개선할 후보를 기록합니다. 문서화 시점의 기술 부채이며 구현 완료 목록이 아닙니다.
 
+진행 상황: #4 provider adapter는 `shared_chat_exporter/providers.py`의 ProviderAdapter 레지스트리로 부분 구현되어, 정규화·bundle 원본 파일명 분기를 한곳에 모았습니다(입력 획득은 아직 cli.py). 나머지 후보는 미착수입니다.
+
 ## 우선순위 요약
 
 | 우선순위 | 후보 | 효과 | 위험 |

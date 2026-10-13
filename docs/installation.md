@@ -3,11 +3,11 @@
 ## 요구사항
 
 - Python 3.10 이상
-- Claude 직접 요청만 사용할 때는 Python 표준 라이브러리만 필요
-- ChatGPT 공유 페이지 캡처 또는 Claude 브라우저 방식에는 Playwright 필요
-- 공개 공유 링크 또는 로컬 snapshot JSON
+- Claude 직접 요청, 로컬 세션·export 입력에는 Python 표준 라이브러리만 필요
+- ChatGPT 공유 페이지 캡처 또는 Claude 브라우저 방식에만 Playwright 필요
+- 입력: 공개 공유 링크, 로컬 snapshot JSON, 또는 로컬 세션·export 로그(Claude Code `.jsonl`, Codex `rollout-*.jsonl`, ChatGPT `conversations.json`/`.zip`)
 
-로그인·보안 확인을 우회하지 않습니다. 조직 전용 공유는 접근 권한이 있는 브라우저 세션이 필요할 수 있습니다.
+로컬 세션·export 입력은 네트워크·브라우저 없이 로컬 파일만 읽습니다. 로그인·보안 확인을 우회하지 않습니다. 조직 전용 공유는 접근 권한이 있는 브라우저 세션이 필요할 수 있습니다.
 
 실행과 설치는 분리됩니다. `install.ps1` / `install.cmd` / `install.sh` 는 **의존성 설치 전용**이고, 실제 실행은 `chat2file.py` (설치 전) 또는 `sce` 명령(설치 후)으로 합니다.
 

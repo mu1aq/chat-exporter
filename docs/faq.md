@@ -32,6 +32,8 @@ ChatGPT에서 artifact, canvas, canmore, textdoc 모양이 공개 구조화 메�
 
 --screenshot은 대화에 첨부된 PNG와 별개로 페이지 화면을 screenshot.png로 만듭니다.
 
+로컬 입력에서도 바이트가 있으면 저장합니다. Claude Code 세션의 base64 이미지 블록, ChatGPT export `.zip` 안의 이미지는 `assets/`에 원본 바이트로 저장합니다. 바이트가 없으면 메타데이터와 사유만 남깁니다.
+
 ## 이미지 URL만 있고 파일이 없으면?
 
 URL, MIME, 이름과 실패 이유를 manifest에 남깁니다. 인증 만료, 권한, 용량 상한, 서비스 제한 때문에 원본을 받지 못할 수 있습니다.
@@ -73,3 +75,19 @@ URL, MIME, 이름과 실패 이유를 manifest에 남깁니다. 인증 만료, �
 ## 여러 링크를 한 번에 처리할 수 있나?
 
 예. ChatGPT와 Claude 링크를 섞어 전달하거나 -i 목록 파일을 사용할 수 있습니다. 파일 출력 디렉터리에는 대화별 파일을 만들고, 일부 실패가 있으면 성공 결과를 유지하면서 종료 코드 1을 반환합니다.
+
+## 공유 링크 말고 로컬 세션 로그도 되나?
+
+예. Claude Code 세션(`~/.claude/projects/<proj>/<id>.jsonl`), Codex 롤아웃(`~/.codex/sessions/**/rollout-*.jsonl`), ChatGPT 데이터 export(`conversations.json` 또는 `.zip`)를 파일 경로로 넣으면 같은 모델·출력·bundle로 보존합니다. 네트워크·브라우저가 필요 없고 자동 판별됩니다. 디렉터리를 넣으면 폴더 전체를 일괄 처리합니다. 동작과 한계는 [공급자 문서](providers.md)와 [향후 세션 export](future-sessions.md)를 보세요.
+
+## Codex가 편집한 파일 내용도 복원되나?
+
+세션 안에서 `apply_patch`로 **생성된** 파일은 버전별로 `artifacts/`에 복원합니다. 세션 밖에 이미 있던 파일을 편집한 경우 시작 내용이 로그에 없어 복원하지 못하고, 그 건수를 경고로 보고합니다. 정확한 패치 원문은 raw 로그에 남습니다.
+
+## 비밀·토큰을 가리려면?
+
+`--redact`를 붙입니다. 감지된 API 키·GitHub/AWS/Google/Slack 토큰·JWT·private key 블록·`key=value` 비밀을 `[REDACTED:종류]`로 마스킹합니다. 정규화 본문과 bundle raw까지 적용되어 결과는 byte-verbatim이 아니며 경고를 남깁니다. 기본은 꺼짐이고 알려진 고정밀 패턴만 대상입니다.
+
+## 브라우저로 바로 볼 수 있는 형식이 있나?
+
+`-f html`(또는 `-o chat.html`)로 외부 리소스 없는 단일 HTML 페이지를 만듭니다. thinking과 도구 호출은 접을 수 있고 모든 내용은 HTML 이스케이프됩니다.
