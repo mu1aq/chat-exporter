@@ -134,7 +134,7 @@ def _build_snapshot(messages: List[Dict[str, Any]], meta: Dict[str, Any]) -> Dic
         "updated_at": meta.get("updated_at"),
         "chat_messages": messages,
     }
-    for k in ("model", "_provider", "_warnings", "_uncertain"):
+    for k in ("model", "_provider", "_warnings", "_uncertain", "_assets"):
         if meta.get(k):
             snap[k] = meta[k]
     return snap
@@ -143,6 +143,7 @@ def _build_snapshot(messages: List[Dict[str, Any]], meta: Dict[str, Any]) -> Dic
 # ------------------------------------------------------------------ Claude Code
 def _claude_code_snapshot(path: Path) -> Dict[str, Any]:
     messages: List[Dict[str, Any]] = []
+    assets: List[Dict[str, Any]] = []
     session_id = title = model = log_version = None
     first_ts = last_ts = None
     skipped_sidechain = 0
@@ -170,6 +171,18 @@ def _claude_code_snapshot(path: Path) -> Dict[str, Any]:
         snap_msg["sender"] = "human" if role == "user" else "assistant" if role == "assistant" else str(role)
         snap_msg["created_at"] = ts
         content = message.get("content")
+        if isinstance(content, list):
+            for block in content:
+                if not (isinstance(block, dict) and block.get("type") == "image"):
+                    continue
+                source = block.get("source") or {}
+                data = source.get("data")
+                if source.get("type") == "base64" and isinstance(data, str):
+                    mime = source.get("media_type") or "image/png"
+                    ext = (mime.split("/")[-1].split("+")[0]) or "png"
+                    assets.append({"id": f"{snap_msg['uuid']}-img-{len(assets)}",
+                                   "name": f"image-{len(assets) + 1}.{ext}", "mime": mime,
+                                   "content_base64": data, "source": "claude-code"})
         if isinstance(content, str):
             snap_msg["text"] = content
             snap_msg.pop("content", None)
@@ -186,7 +199,7 @@ def _claude_code_snapshot(path: Path) -> Dict[str, Any]:
     return _build_snapshot(messages, {
         "uuid": session_id or path.stem, "title": title, "model": model,
         "created_at": first_ts, "updated_at": last_ts,
-        "_provider": CLAUDE_CODE, "_warnings": warnings,
+        "_provider": CLAUDE_CODE, "_warnings": warnings, "_assets": assets,
     })
 
 
@@ -313,4 +326,6 @@ def finalize_session(conv: Dict[str, Any], path: Union[str, Path], snap: Dict[st
     unc = snap.get("_uncertain") or []
     if unc:
         conv.setdefault("preservation", {}).setdefault("uncertain", []).extend(unc)
+    if snap.get("_assets"):
+        conv.setdefault("assets", []).extend(snap["_assets"])
     return conv

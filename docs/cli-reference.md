@@ -118,6 +118,7 @@ ChatGPT에서는 --via를 사용하지 않고 항상 전용 Playwright 캡처를
 | --thinking | snapshot에 공개된 thinking 블록을 파생 출력에 표시 |
 | --no-attachments | 파생 사용자 입력에서 첨부·붙여넣은 텍스트 제외 |
 | --no-artifacts | 파생 출력에서 Artifact 내용 제외 |
+| --redact | 감지된 비밀(API 키·JWT·private key 등)을 `[REDACTED:종류]`로 마스킹. 적용 시 결과는 byte-verbatim이 아니며 경고를 남김 |
 
 원시 snapshot, raw block, bundle의 branch 자료는 가능한 한 유지됩니다. 위 옵션은 주로 사람이 읽는 파생 출력에 영향을 줍니다.
 
@@ -136,7 +137,7 @@ ChatGPT에서는 --via를 사용하지 않고 항상 전용 Playwright 캡처를
 
 | 옵션 | 설명 |
 |---|---|
-| -f, --format FORMAT | jsonl, json, csv, md, txt, chat |
+| -f, --format FORMAT | jsonl, json, csv, md, txt, chat, html |
 | -o, --output PATH | 출력 파일, 디렉터리 또는 - |
 | --force | 기존 파일 또는 bundle 대상 덮어쓰기 허용 |
 | --copy | 파생 출력을 클립보드에도 복사 |

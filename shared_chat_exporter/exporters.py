@@ -1,8 +1,9 @@
-"""Export formats: jsonl, json, csv, md, txt, chat."""
+"""Export formats: jsonl, json, csv, md, txt, chat, html."""
 
 from __future__ import annotations
 
 import csv
+import html as _html
 import io
 import json
 import re
@@ -12,9 +13,9 @@ from .extract import fence
 
 Conv = Dict[str, Any]
 
-EXT = {"jsonl": "jsonl", "json": "json", "csv": "csv", "md": "md", "txt": "txt", "chat": "jsonl"}
+EXT = {"jsonl": "jsonl", "json": "json", "csv": "csv", "md": "md", "txt": "txt", "chat": "jsonl", "html": "html"}
 EXT_TO_FORMAT = {"jsonl": "jsonl", "ndjson": "jsonl", "json": "json", "csv": "csv", "md": "md",
-                 "markdown": "md", "txt": "txt"}
+                 "markdown": "md", "txt": "txt", "html": "html", "htm": "html"}
 DESCRIPTIONS = {
     "jsonl": "one turn per line {share_id, title, turn, user_input, agent_output}",
     "json": "preservation structure (branches, raw message blocks, attachments, artifacts, capture, stats)",
@@ -22,6 +23,7 @@ DESCRIPTIONS = {
     "md": "readable document",
     "txt": "plain text that is easy to paste",
     "chat": "one conversation per line {messages:[{role,content}…]} (for fine-tuning)",
+    "html": "self-contained HTML page with collapsible thinking and tool calls",
 }
 
 
@@ -144,8 +146,64 @@ def to_chat(convs: List[Conv], system: Optional[str] = None, **_: Any) -> str:
     return "\n".join(lines) + ("\n" if lines else "")
 
 
+_HTML_CSS = """
+:root{color-scheme:light dark}
+body{font:16px/1.6 system-ui,sans-serif;max-width:820px;margin:0 auto;padding:24px 16px}
+h1{font-size:1.5rem;margin:0 0 .2em}
+.meta{color:#888;font-size:.85rem;margin-bottom:1.5em}
+.turn{border-top:1px solid #8884;padding-top:1em;margin-top:1em}
+.role{font-weight:700;margin:.6em 0 .2em}
+.user .role{color:#b58900}.assistant .role{color:#268bd2}
+.text{white-space:pre-wrap;overflow-wrap:anywhere}
+details{margin:.5em 0;border:1px solid #8884;border-radius:6px;padding:.3em .6em}
+summary{cursor:pointer;color:#888}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#8881;padding:.6em;border-radius:6px;margin:.4em 0}
+.warn{color:#dc322f}
+"""
+
+
+def _esc(text: Any) -> str:
+    return _html.escape("" if text is None else str(text))
+
+
+def to_html(convs: List[Conv], only: Optional[str] = None, **_: Any) -> str:
+    title0 = (convs[0]["source"].get("title") if convs else None) or "Conversation"
+    out: List[str] = [
+        "<!doctype html>", '<html lang="en"><head><meta charset="utf-8">',
+        '<meta name="viewport" content="width=device-width,initial-scale=1">',
+        f"<title>{_esc(title0)}</title><style>{_HTML_CSS}</style></head><body>",
+    ]
+    for c in convs:
+        src = c["source"]
+        assistant = assistant_label(src.get("provider"))
+        out.append(f"<h1>{_esc(src.get('title') or assistant + ' conversation')}</h1>")
+        meta = [src.get("share_url") or "", _when(src.get("created_at")), f"{len(c['turns'])} turns"]
+        out.append(f'<div class="meta">{_esc(" · ".join(x for x in meta if x))}</div>')
+        for w in c.get("warnings") or []:
+            out.append(f'<div class="warn">! {_esc(w)}</div>')
+        for t in c["turns"]:
+            out.append(f'<div class="turn"><div class="turn-no">Turn {t["turn"]}</div>')
+            if only != "assistant":
+                out.append('<div class="user"><div class="role">User</div>'
+                           f'<div class="text">{_esc(t["user_input"]) or "<em>(no input)</em>"}</div></div>')
+            if only != "user":
+                if t.get("thinking"):
+                    out.append(f"<details><summary>Thinking</summary><pre>{_esc(t['thinking'])}</pre></details>")
+                for call in t.get("tool_calls") or []:
+                    body = json.dumps({k: call.get(k) for k in ("name", "input", "result", "is_error")},
+                                      ensure_ascii=False, indent=2)
+                    out.append(f"<details><summary>Tool: {_esc(call.get('name'))}</summary>"
+                               f"<pre>{_esc(body)}</pre></details>")
+                out.append(f'<div class="assistant"><div class="role">{_esc(assistant)}</div>'
+                           f'<div class="text">{_esc(t["agent_output"]) or "<em>(no text output)</em>"}</div></div>')
+            out.append("</div>")
+    out.append("</body></html>")
+    return "\n".join(out) + "\n"
+
+
 FORMATS: Dict[str, Callable[..., str]] = {
-    "jsonl": to_jsonl, "json": to_json, "csv": to_csv, "md": to_markdown, "txt": to_text, "chat": to_chat,
+    "jsonl": to_jsonl, "json": to_json, "csv": to_csv, "md": to_markdown, "txt": to_text,
+    "chat": to_chat, "html": to_html,
 }
 
 

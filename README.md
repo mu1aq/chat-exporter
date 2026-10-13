@@ -33,6 +33,7 @@ ChatGPT와 Claude 공개 공유 대화를 보존하는 독립형 Python 프로�
 - [Claude 추출 구현](shared_chat_exporter/extract.py)
 - [보존 bundle 구현](shared_chat_exporter/bundle.py)
 - [무결성 검증 구현](shared_chat_exporter/audit.py)
+- [비밀 마스킹 구현](shared_chat_exporter/redact.py)
 - [출력 예제](examples/README.md)
 - [테스트](tests/)
 
@@ -112,7 +113,7 @@ sce ~/.claude/projects/<proj>/ -o out/                  # 폴더 전체 일괄
 sce chatgpt-export.zip -o out/                          # ChatGPT export → 대화마다 파일
 ~~~
 
-일반 파일 출력은 JSON, JSONL, CSV, Markdown, TXT, chat JSONL을 지원합니다. 모든 원문·분기·Artifact 버전·자산·감사 기록을 함께 남기려면 --bundle을 사용하세요.
+일반 파일 출력은 JSON, JSONL, CSV, Markdown, TXT, chat JSONL, HTML(`-f html`, 접을 수 있는 thinking·도구)을 지원합니다. 비밀/토큰을 가리려면 `--redact`를 붙입니다(byte-verbatim 아님). 모든 원문·분기·Artifact 버전·자산·감사 기록을 함께 남기려면 --bundle을 사용하세요.
 
 전체 명령 옵션, 출력 계약, 공급자별 한계와 개발 문서는 [문서 인덱스](docs/README.md)에서 찾을 수 있습니다.
 

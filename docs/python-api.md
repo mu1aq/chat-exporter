@@ -16,7 +16,7 @@ import shared_chat_exporter
 from shared_chat_exporter import __version__
 ~~~
 
-현재 버전은 0.3.0입니다.
+현재 버전은 0.4.0입니다.
 
 ## ChatGPT URL
 

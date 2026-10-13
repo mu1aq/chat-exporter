@@ -1,5 +1,14 @@
 # 변경 기록
 
+## 0.4.0 — 2026-10-13
+
+- `--redact`: 감지된 비밀(API 키·GitHub/AWS/Google/Slack 토큰·JWT·private key 블록·`key=value` 비밀)을 `[REDACTED:종류]`로 마스킹. 정규화 본문과 bundle raw까지 적용되어 결과는 byte-verbatim이 아니며 경고를 남김. 기본 off. `shared_chat_exporter/redact.py`
+- HTML export(`-f html`, `.html`): 외부 리소스 없는 자체완결 페이지, thinking·도구 호출은 접을 수 있는 `<details>`, 모든 내용 HTML 이스케이프
+- assets 심화 (Claude Code 세션):
+  - 사용자 메시지의 base64 이미지 블록 → `assets/`에 바이트 저장
+  - `Write`/`Edit`(및 str_replace류) 도구 호출 → 파일 버전 복원해 `artifacts/`에 vNN 기록
+- `extract`가 에이전트 파일툴 입력 별칭(`content`/`file_path`/`old_string`/`new_string`)과 대소문자 무시 이름을 인식
+
 ## 0.3.0 — 2026-10-13
 
 - ChatGPT 데이터 export 지원: `conversations.json` 또는 그것을 담은 `.zip`을 경로로 넣으면 **브라우저 없이** 대량 보존. 한 파일에서 여러 대화를 각각 추출(`mapping` 활성 경로 복원, system/tool·숨김 메시지 제외). `shared_chat_exporter/chatgpt_export.py`

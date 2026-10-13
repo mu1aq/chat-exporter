@@ -44,6 +44,7 @@ from .extract import Options
 from .fetch import METHODS, FetchError, Fetcher, describe_origin
 from .chatgpt_export import detect_chatgpt_export, export_to_snapshot, iter_export_conversations
 from .providers import get_adapter
+from .redact import redact_obj
 from .select import SelectError, select_turns
 from .sessions import detect_session, session_to_snapshot
 from .snapshot import (
@@ -240,6 +241,11 @@ def build_convs(loaded: List[Loaded], args: argparse.Namespace, ui: UI) -> List[
         conv = get_adapter(ld.provider).normalize(ld, opts)
         conv["_label"] = ld.item.path.stem if ld.item.path else (ld.item.share_id or "snapshot")
         conv["_raw"] = ld.raw
+        if getattr(args, "redact", False):
+            conv, redacted = redact_obj(conv)
+            if redacted:
+                conv.setdefault("warnings", []).append(
+                    f"{redacted} secret(s) redacted; this export is no longer byte-verbatim.")
         for w in conv["warnings"]:
             ui.warn(f"{conv['source']['title'] or conv['_label']}: {w}")
         if getattr(args, "turns", None) or getattr(args, "last", None) or getattr(args, "grep", None):
@@ -782,6 +788,8 @@ def _input_opts(p: argparse.ArgumentParser) -> None:
     e.add_argument("--thinking", action="store_true", help="include the thinking process as thinking")
     e.add_argument("--no-attachments", action="store_true", help="exclude attachment/pasted text from the input")
     e.add_argument("--no-artifacts", action="store_true", help="exclude artifact content from the output")
+    e.add_argument("--redact", action="store_true",
+                   help="mask detected secrets/tokens (API keys, JWTs, private keys); output is no longer byte-verbatim")
 
 
 def _select_opts(p: argparse.ArgumentParser) -> None:

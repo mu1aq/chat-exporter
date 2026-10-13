@@ -146,6 +146,55 @@ class DriftAndDirTest(unittest.TestCase):
             self.assertEqual(len(list(out.glob("*.md"))), 2)
 
 
+class AssetsTest(unittest.TestCase):
+    def _write(self, d, lines):
+        p = d / "s.jsonl"
+        p.write_text("\n".join(json.dumps(x) for x in lines), encoding="utf-8")
+        return p
+
+    def test_image_block_saved_as_asset(self):
+        with TempDir() as d, TempDir() as out:
+            p = self._write(d, [
+                {"type": "user", "uuid": "u1", "parentUuid": None, "sessionId": "s", "message": {"role": "user",
+                 "content": [{"type": "text", "text": "see this"},
+                             {"type": "image", "source": {"type": "base64", "media_type": "image/png", "data": "aGVsbG8="}}]}},
+                {"type": "assistant", "uuid": "a1", "parentUuid": "u1", "sessionId": "s",
+                 "message": {"role": "assistant", "content": [{"type": "text", "text": "ok"}]}},
+            ])
+            snap = session_to_snapshot(p)
+            conv = finalize_session(extract(snap, Options()), p, snap)
+            self.assertEqual(len(conv["assets"]), 1)
+            self.assertEqual(conv["assets"][0]["mime"], "image/png")
+            r = run_cli(str(p), "--bundle", str(out))
+            self.assertEqual(r.code, 0, r.err)
+            saved = list((out / "assets").glob("image-1.*"))
+            self.assertEqual(len(saved), 1)
+            self.assertEqual(saved[0].read_bytes(), b"hello")
+
+    def test_write_then_edit_reconstructs_file_versions(self):
+        with TempDir() as d:
+            p = self._write(d, [
+                {"type": "user", "uuid": "u1", "parentUuid": None, "sessionId": "s",
+                 "message": {"role": "user", "content": "edit a.py"}},
+                {"type": "assistant", "uuid": "a1", "parentUuid": "u1", "sessionId": "s", "message": {"role": "assistant",
+                 "content": [{"type": "tool_use", "id": "t1", "name": "Write", "input": {"file_path": "a.py", "content": "v1\n"}}]}},
+                {"type": "user", "uuid": "u2", "parentUuid": "a1", "sessionId": "s", "message": {"role": "user",
+                 "content": [{"type": "tool_result", "tool_use_id": "t1", "content": "ok"}]}},
+                {"type": "assistant", "uuid": "a2", "parentUuid": "u2", "sessionId": "s", "message": {"role": "assistant",
+                 "content": [{"type": "tool_use", "id": "t2", "name": "Edit", "input": {"file_path": "a.py", "old_string": "v1", "new_string": "v2"}}]}},
+                {"type": "user", "uuid": "u3", "parentUuid": "a2", "sessionId": "s", "message": {"role": "user",
+                 "content": [{"type": "tool_result", "tool_use_id": "t2", "content": "ok"}]}},
+            ])
+            snap = session_to_snapshot(p)
+            conv = finalize_session(extract(snap, Options(tools=True)), p, snap)
+            arts = conv["artifacts"]
+            self.assertEqual(len(arts), 1)
+            self.assertEqual(arts[0]["versions"], 2)
+            self.assertEqual(arts[0]["ext"], "py")
+            self.assertIn("v2", arts[0]["content"])
+            self.assertNotIn("v1", arts[0]["content"])
+
+
 class CliTest(unittest.TestCase):
     def test_markdown_export(self):
         r = run_cli(str(SESSION), "-f", "md", "--tools", "--thinking")

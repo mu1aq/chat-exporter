@@ -114,6 +114,18 @@ Markdown은 파생 표현이므로 서비스의 원본 토큰과 동일하다는
 
 --system TEXT로 system 메시지를 맨 앞에 넣습니다. 빈 user 또는 assistant 내용은 생략합니다. 이 형식은 편의 변환이며 특정 학습 API의 최신 요구사항을 보장하지 않습니다.
 
+## HTML
+
+자체완결 단일 HTML 페이지입니다(외부 리소스·스크립트 없음, 인라인 CSS). 턴별 사용자/어시스턴트 블록을 보여주고, thinking과 도구 호출은 접을 수 있는 `<details>`로 넣습니다. 모든 대화 내용은 HTML 이스케이프하므로 로그 안의 `<script>` 같은 내용이 태그로 실행되지 않습니다. 브라우저로 바로 열거나 공유하기 좋습니다.
+
+~~~console
+shared-chat-export URL -o chat.html
+~~~
+
+## 비밀 마스킹 (--redact)
+
+`--redact`를 붙이면 감지된 API 키·토큰·JWT·private key 블록을 `[REDACTED:종류]`로 가립니다. 정규화 본문과 bundle의 raw까지 적용되므로 결과는 byte-verbatim이 아니며, 마스킹 건수가 경고로 남습니다. 기본은 꺼짐입니다. 높은 정확도의 알려진 패턴만 대상으로 하여 일반 텍스트 오검출을 피합니다.
+
 ## 필터가 출력에 미치는 영향
 
 | 옵션 | JSONL/CSV/MD/TXT | JSON | chat |

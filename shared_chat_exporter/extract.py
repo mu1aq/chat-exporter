@@ -220,12 +220,19 @@ class _Artifacts:
             if cmd == "update" and isinstance(inp.get("new_str"), str):
                 return self._edit(key, inp.get("old_str"), inp["new_str"])
             return None
+        # Accept agent-tool input aliases too (Claude Code Write/Edit: content/file_path/old_string/new_string).
+        nm = name.lower()
         path = inp.get("path") or inp.get("file_path")
-        if isinstance(inp.get("file_text"), str) and (name in FILE_CREATE_TOOLS or path):
-            return self._set(str(path or name), inp["file_text"], "create", title=path)
-        if name in FILE_EDIT_TOOLS and path and isinstance(inp.get("new_str"), str):
-            if inp.get("command") in (None, "str_replace"):
-                return self._edit(str(path), inp.get("old_str"), inp["new_str"])
+        file_text = inp.get("file_text")
+        if not isinstance(file_text, str):
+            file_text = inp.get("content") if isinstance(inp.get("content"), str) else None
+        if file_text is not None and (nm in FILE_CREATE_TOOLS or path):
+            return self._set(str(path or name), file_text, "create", title=path)
+        if nm in FILE_EDIT_TOOLS and path:
+            new = inp.get("new_str") if isinstance(inp.get("new_str"), str) else inp.get("new_string")
+            old = inp.get("old_str") if inp.get("old_str") is not None else inp.get("old_string")
+            if isinstance(new, str) and inp.get("command") in (None, "str_replace"):
+                return self._edit(str(path), old, new)
         return None
 
     def _set(self, key, content, action, title=None, type_=None, language=None):

@@ -141,7 +141,7 @@ artifacts 도구의 create와 update 명령을 시간 순서로 적용합니다.
 ### Claude Code / Codex 세션
 
 - 로그는 append 선형 순서라 트랜스크립트는 파일 순서를 따릅니다(트리 walk 아님). 원본 `parentUuid`는 메시지 meta에 보존.
-- Claude Code: `user`/`assistant` 라인의 content block(text/thinking/tool_use/tool_result)을 그대로 재사용. `isSidechain`은 raw 로그에만 남기고 경고.
+- Claude Code: `user`/`assistant` 라인의 content block(text/thinking/tool_use/tool_result)을 그대로 재사용. `isSidechain`은 raw 로그에만 남기고 경고. 사용자 메시지의 base64 이미지 블록은 `assets/`에 바이트로 저장. `Write`/`Edit`(및 str_replace류) 도구 호출은 파일 버전으로 복원해 `artifacts/`에 vNN으로 기록(모르는 이름의 편집 도구, 예: MultiEdit은 현재 제외).
 - Codex: `response_item` payload를 순회해 message·reasoning·tool call/output을 매핑. `reasoning.encrypted_content`는 복호화 불가라 `summary`만 보존하고 나머지는 manifest `uncertain`. developer·환경 래퍼 메시지는 트랜스크립트에서 제외(raw엔 보존).
 - 메시지 content의 CRLF/CR은 LF로 정규화(raw 로그는 원본 바이트 유지).
 - 로그 포맷은 비공개라 릴리스마다 바뀔 수 있어 **현재 버전만 테스트**(Claude Code `version` 2.1.266–2.1.296, Codex `cli_version` 0.162.x). 범위 밖이면 경고합니다.

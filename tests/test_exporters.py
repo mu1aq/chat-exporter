@@ -14,6 +14,16 @@ def convs(**kw):
 
 
 class ExportTest(unittest.TestCase):
+    def test_html(self):
+        h = export(convs(tools=True, thinking=True), "html")
+        self.assertTrue(h.startswith("<!doctype html>"))
+        self.assertIn("<h1>", h)
+        self.assertIn("Turn 1", h)
+        self.assertIn("<details><summary>Thinking</summary>", h)
+        self.assertIn("</body></html>", h)
+        # angle brackets in content are escaped, not raw tags
+        self.assertNotIn("<script>", h.lower())
+
     def test_jsonl(self):
         lines = export(convs(), "jsonl").strip().split("\n")
         self.assertEqual(len(lines), 4)
